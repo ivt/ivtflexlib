@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:SparkSkin
+	xmlns:fx="http://ns.adobe.com/mxml/2009"
+	xmlns:s="library://ns.adobe.com/flex/spark"
+	width="100%"
+	minHeight="15"
+	alpha.disabled="0.5">
+
+	<fx:Metadata>
+		<![CDATA[
+			[HostComponent("com.ivt.flex.controls.WindowShade")]
+		]]>
+	</fx:Metadata>
+
+	<fx:Declarations>
+		<s:Sine id="sineIn" easeInFraction="0.2" />
+		<s:Sine id="sineOut" easeInFraction="0.8" />
+	</fx:Declarations>
+
+	<s:states>
+		<s:State name="normal"        stateGroups="down, closed" />
+		<s:State name="open"          stateGroups="down, opened" />
+		<s:State name="disabled"      stateGroups="down" />
+		<s:State name="normalLeft"    stateGroups="left, horizontal, closed" />
+		<s:State name="openLeft"      stateGroups="left, horizontal, opened" />
+		<s:State name="disabledLeft"  stateGroups="left, horizontal" />
+		<s:State name="normalRight"   stateGroups="right, horizontal, closed" />
+		<s:State name="openRight"     stateGroups="right, horizontal, opened" />
+		<s:State name="disabledRight" stateGroups="right, horizontal" />
+	</s:states>
+
+	<s:transitions>
+		<!-- Down -->
+		<s:Transition fromState="normal" toState="open">
+			<s:Parallel>
+				<s:Resize target="{this}" duration="{hostComponent.duration}" easer="{sineOut}"/>
+				<s:Wipe direction="down" target="{this.contentGroup}" duration="{hostComponent.duration}" easer="{sineOut}" />
+			</s:Parallel>
+		</s:Transition>
+		<s:Transition fromState="open" toState="normal">
+			<s:Parallel>
+				<s:Resize target="{this}" duration="{hostComponent.duration}" easer="{sineIn}"/>
+				<s:Wipe direction="up" target="{this.contentGroup}" duration="{hostComponent.duration}" easer="{sineIn}" />
+			</s:Parallel>
+		</s:Transition>
+
+		<!-- Left -->
+		<s:Transition fromState="normalLeft" toState="openLeft">
+			<s:Parallel>
+				<s:Resize target="{this}" duration="{hostComponent.duration}" easer="{sineOut}"/>
+				<s:Wipe direction="right" target="{this.contentGroup}" duration="{hostComponent.duration}" easer="{sineOut}" />
+			</s:Parallel>
+		</s:Transition>
+		<s:Transition fromState="openLeft" toState="normalLeft">
+			<s:Parallel>
+				<s:Resize target="{this}" duration="{hostComponent.duration}" easer="{sineIn}"/>
+				<s:Wipe direction="left" target="{this.contentGroup}" duration="{hostComponent.duration}" easer="{sineIn}" />
+			</s:Parallel>
+		</s:Transition>
+
+		<!-- Right -->
+		<s:Transition fromState="normalRight" toState="openRight">
+			<s:Parallel>
+				<s:Resize target="{this}" duration="{hostComponent.duration}" easer="{sineOut}"/>
+				<s:Wipe direction="right" target="{this.contentGroup}" duration="{hostComponent.duration}" easer="{sineOut}" />
+			</s:Parallel>
+		</s:Transition>
+		<s:Transition fromState="openRight" toState="normalRight">
+			<s:Parallel>
+				<s:Resize target="{this}" duration="{hostComponent.duration}" easer="{sineIn}"/>
+				<s:Wipe direction="left" target="{this.contentGroup}" duration="{hostComponent.duration}" easer="{sineIn}" />
+			</s:Parallel>
+		</s:Transition>
+	</s:transitions>
+
+	<s:Group
+		width="100%" height="100%">
+
+		<s:ToggleButton
+			id="button"
+			label.closed="{hostComponent.label}"
+			label.opened="{hostComponent.labelOpen ? hostComponent.labelOpen : hostComponent.label}"
+			top="0"
+			bottom.horizontal="0"
+			left.down="0" right.down="0"
+			right.left="0"
+			left.right="0"
+			horizontalCenter.down="0"
+			verticalCenter.horizontal="0" />
+			<!--skinClass="brilliance.framework.skins.BrWindowShadeButtonSkin"/>-->
+
+		<s:Group
+			id="contentGroup"
+			bottom="0"
+			top.horizontal="0"
+			left.down="0" right.down="0" top.down="{this.button.height}"
+			left.left="0" right.left="{this.button.width}"
+			left.right="{this.button.width}" right.right="0"
+			minWidth="0" minHeight="0"
+			visible="false"
+			visible.opened="true"
+			includeInLayout="false"
+			includeInLayout.opened="true">
+
+			<s:layout>
+				<s:BasicLayout />
+			</s:layout>
+
+		</s:Group>
+
+	</s:Group>
+
+</s:SparkSkin>

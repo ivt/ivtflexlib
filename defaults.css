@@ -1,0 +1,13 @@
+/* CSS file */
+
+@namespace ivt "com.ivt.flex.controls.*";
+
+ivt|DateTimeChooser
+{
+	skin-class: ClassReference( "com.ivt.flex.skins.DateTimeChooserSkin" );
+}
+
+ivt|WindowShade
+{
+	skin-class: ClassReference( "com.ivt.flex.skins.WindowShadeSkin" );
+}

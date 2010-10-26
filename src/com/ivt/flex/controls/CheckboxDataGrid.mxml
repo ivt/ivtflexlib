@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:DataGrid 
+	xmlns:mx="http://www.adobe.com/2006/mxml" 
+	headerRelease="this.stopHeaderSortEvent( event );" 
+	allowMultipleSelection="true" 
+	allowDragSelection="true" 
+	doubleClickEnabled="true"
+	creationComplete="this.setSelected()"
+	itemRollOver="this.lastRollOverIndex = event.rowIndex">
+
+	<!-- Selected Column -->
+	<mx:DataGridColumn id="selectColumn" dataField="prototype" editable="false" resizable="false" width="24">
+		<mx:headerRenderer>
+			<mx:Component>
+				<mx:HBox height="100%" width="50" paddingLeft="4" click="{outerDocument.headerCheckboxClicked( event )}">	   					   			
+					<mx:CheckBox id="headerCheckbox" mouseEnabled="false" selected="{outerDocument.allItemsSelected}" />	   				
+				</mx:HBox>
+		   	</mx:Component>
+	   	</mx:headerRenderer>
+		<mx:itemRenderer>
+			<mx:Component>
+				<mx:HBox height="100%" width="50" paddingLeft="4">		      	 	   	 	
+					<mx:CheckBox id="selectedBox" mouseEnabled="false" selected="{outerDocument.isSelected( data, outerDocument.selectedItems )}"/>
+					<mx:CheckBox styleName="{outerDocument.styleClassName(data)}" enabled="false" />	         					      	 	      	 							      	 										      	 			         	         		         	         		      
+				</mx:HBox>
+			</mx:Component>						
+		</mx:itemRenderer>
+	</mx:DataGridColumn>	
+	
+	<mx:Script>
+		<![CDATA[
+			import mx.events.ListEvent;
+			import mx.collections.ArrayCollection;
+			import mx.controls.listClasses.IListItemRenderer;
+			import mx.events.DataGridEvent;
+			import mx.collections.ListCollectionView;
+			
+			public var _allItemsSelected:Boolean;
+			protected var checkedItems:Array = new Array();
+			
+			protected var lastRollOverIndex:Number = -1;
+			protected var selectColumnWidth:Number = 24;
+			
+			override public function set dataProvider( value:Object ):void
+			{
+				super.dataProvider = value;
+				checkedItems = new Array();
+				selectedItems = checkedItems;
+				this.setAllItemsSelected();
+			}
+			
+			/**
+			 * Appends the column of checkboxes to the beginning of the array passed in.
+			 */
+			override public function set columns(value:Array):void
+			{
+				var newColumns:Array = value.slice();
+										
+				if(newColumns.indexOf(selectColumn) == -1)
+				{	
+					newColumns.unshift(selectColumn);
+				}
+				super.columns = newColumns;
+			}
+			
+			public function set SelectColumnWidth(value:int):void
+			{
+				this.selectColumnWidth = value;
+				if (super.columnCount > 0)
+				{
+					super.columns[0].width = value;
+				}
+			}
+			
+			override protected function selectItem(item:IListItemRenderer,shiftKey:Boolean, ctrlKey:Boolean,transition:Boolean = true):Boolean
+			{
+				//Check to see if the select is from the Checkbox row, all the others will have a listData property
+				if(!(item as Object).hasOwnProperty("listData") && !shiftKey)
+				{
+					ctrlKey = true;
+				}
+	   			var retVal:Boolean = super.selectItem(item, shiftKey, ctrlKey, transition);
+   				var listItemArray:Array = (dataProvider as ListCollectionView).toArray();
+   				
+   				checkedItems = new Array();
+	   			for each(var idx:Number in selectedIndices)
+	   			{
+	   				checkedItems.push(listItemArray[idx]);
+	   			}
+
+	   			this.setAllItemsSelected();
+	   			return retVal;	 
+			}
+			
+			public function get CheckedItems():Array	{return checkedItems;}
+			
+			public function isSelected(data:Object, selectedItems:Array):Boolean
+			{
+				return isItemSelected(data);
+			}
+			
+			public function styleClassName(data:Object):String
+			{
+				if (data.IconStyleName != null)
+				{
+					return data.IconStyleName;
+				}
+				return '';
+			}
+			
+			/**
+			 * Called from the headerRenderer declared above, which selects all of the checkboxes.
+			 */
+			public function headerCheckboxClicked( event:Event ):void
+			{					
+	   			//Either select or deselect all the rows
+	   			if( this.getAllItemsSelected() )
+	   			{
+	   				//Clear all selected items	
+	   				for each ( var idx:int in selectedIndices )
+	   				{
+	   					selectedItems.shift();
+	   				}
+	   				selectedIndices = new Array();				
+	   			}
+	   			else
+	   			{
+	   				if( dataProvider )
+            		{
+		   				//Select the entire grid
+	   					var listItem:Object;
+	   					var listItemArray:Array = ( dataProvider as ListCollectionView ).toArray();
+	   					selectedItems = listItemArray;
+	   					if ( !selectedItems.length )
+	   					{
+		   					for each(listItem in listItemArray )
+		   					{
+		   						selectedItems.push( listItem );
+		   					}
+		   				}
+            		}
+	   			}
+	   			checkedItems = selectedItems;	
+	   			this.setAllItemsSelected();
+	   			this.dispatchEvent( new ListEvent( ListEvent.CHANGE ) );
+			}
+			
+			[Bindable]
+			public function get allItemsSelected():Boolean { return this._allItemsSelected; }
+			public function set allItemsSelected( value: Boolean ):void { this._allItemsSelected = value; }
+			
+			public function setAllItemsSelected():void 
+			{
+				this.allItemsSelected = getAllItemsSelected() 
+			}
+			
+			public function get LastRollOverIndex():Number 
+			{
+				if ( !( this.dataProvider as ListCollectionView ).length )
+				{
+					this.lastRollOverIndex = -1;
+				}
+				return this.lastRollOverIndex;
+			}
+   			
+   			public function getAllItemsSelected():Boolean
+			{
+ 				if( dataProvider is ListCollectionView )
+				{
+					if( ( dataProvider as ListCollectionView ).length > 0 )
+					{
+						return selectedIndices.length == ( dataProvider as ListCollectionView ).length;
+					}
+				} 
+				return false;   			   			
+			}
+			
+			/**
+			 * Prevents a header sort event firing if it belongs to the checkbox column.
+			 * ie. We don't want to be able to sort on it, because it would be meaningless.
+			 */
+			public function stopHeaderSortEvent( event:DataGridEvent ):void
+			{
+				if( columns[ event.columnIndex ] == selectColumn )
+				{
+					event.stopImmediatePropagation();
+					event.preventDefault();
+				}
+			}
+			
+			/**
+			 * Called from the creation complete handler.
+			 */
+			private function setSelected():void
+			{
+				var selItemSerialList:Array = new Array();
+				var selItems:Array = new Array();
+				var itemSerial:Number;
+				
+				for each ( var item:Object in dataProvider )
+				{
+					if ( item.hasOwnProperty( "selected" ) && item.selected )
+					{
+						selItems.push( item );
+					}
+				}
+				selectedItems = selItems;
+				this.setAllItemsSelected();
+				super.columns[ 0 ].width = this.selectColumnWidth;
+			}
+			
+		]]>
+	</mx:Script>	
+	
+</mx:DataGrid>

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark" 
+		 xmlns:mx="library://ns.adobe.com/flex/mx"
+		 xmlns:controls="com.ivt.flex.controls.*"
+		 creationComplete="this.init()">
+	<s:layout>
+		<s:HorizontalLayout/>
+	</s:layout>
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+	
+	<fx:Script>
+		<![CDATA[
+			[Bindable]
+			public var formatString:String = DateTimeChooser.FORMAT_DATETIME;
+			
+			[Bindable]
+			public var selectedStartDate:Date;
+			
+			[Bindable]
+			public var selectedEndDate:Date;
+			
+			//I hate this, but the chooser have 0 width without it
+			private function init():void
+			{
+				this.startDate.width = this.width / 2;
+				this.endDate.width = this.width / 2;
+			}
+
+			override public function get baselinePosition():Number
+			{
+				return this.startDate.baselinePosition;
+			}
+		]]>
+	</fx:Script>
+	
+	<controls:DateTimeChooser
+		id="startDate"
+		selectedDate="{this.selectedStartDate}"
+		formatString="{this.formatString}"
+		change="this.selectedStartDate = this.startDate.selectedDate"/>
+	<controls:DateTimeChooser
+		id="endDate"
+		formatString="{this.formatString}"
+		minDateTime="{this.startDate.selectedDate}"
+		selectedDate="{this.selectedEndDate}"
+		change="this.selectedEndDate = this.endDate.selectedDate"/>
+</s:Group>

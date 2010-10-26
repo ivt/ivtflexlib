@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<project name="build" default="release">
+
+	<!-- ================= PROPERTIES ================== -->
+
+	<!-- The root level of the brilliance directory is ascertained from this build file's path -->
+	<dirname property="ivtflexlib.dir" file="${ant.file}" />
+	<property environment="env"/>
+	
+	<fail message="FLEX_HOME not correctly set. Make sure it is set in your environment.">
+		<condition>
+			<not>
+				<available file="${env.FLEX_HOME}/frameworks"/>
+			</not>
+		</condition>
+	</fail>
+	<property name="flex.sdk.dir" location="${env.FLEX_HOME}" />
+	<property name="compc.bin" location="${flex.sdk.dir}/bin/compc" />
+	
+	<property name="bin.dir" location="${ivtflexlib.dir}/bin" />
+	<property name="src.dir" location="${ivtflexlib.dir}/src" />
+
+	<property name="locale" value="en_US" />
+	<property name="target.player" value="10.1.0" />
+	
+	
+	<!-- ================= EXTERNAL TASKS ================== -->
+
+	<!-- These third party tasks are used for the <outofdate> macro. -->
+	<property name="ant.libs.dir" value="${ivtflexlib.dir}/lib/ant" />
+	<taskdef resource="net/sf/antcontrib/antcontrib.properties">
+		<classpath>
+			<pathelement location="${ant.libs.dir}/ant-contrib-1.0b3.jar"/>
+		</classpath>
+	</taskdef>
+
+
+	<!-- ================ TAKS ================= -->
+
+	<target name="release">
+		<property name="debug-build" value="false" />
+		<antcall target="compile-swc" />
+	</target>
+
+	<target name="debug">
+		<property name="debug-build" value="true" />
+		<antcall target="compile-swc" />
+	</target>
+
+	<target name="clean">
+		<delete dir="${bin.dir}" />
+	</target>
+
+	<target name="init">
+		<mkdir dir="${bin.dir}" />
+	</target>
+
+	<!-- Compile the swc if the source files have changed... -->
+	<target name="compile-swc" depends="init">
+		<echo message="Checking if ivtflexlib.swc needs to be compiled..." />
+		<outofdate>
+			<sourcefiles>
+				<fileset dir="${src.dir}" />
+			</sourcefiles>
+			<targetfiles path="${bin.dir}/ivtflexlib.swc" />
+			<sequential>
+				<!-- http://labs.adobe.com/wiki/index.php/Talk:Flex_Ant_Tasks#dynamically_adding_assets_to_compc -->
+				<!-- This takes a path such as "brilliance/framework/net/Remoter.as" and turns it into "brilliance.framework.net.Remoter" -->
+				<pathconvert property="swc.include.classes" pathsep=",">
+					<fileset dir="${src.dir}">
+						<include name="**/*.as"/>
+						<include name="**/*.mxml"/>
+					</fileset>
+					<compositemapper>
+						<packagemapper from="${src.dir}\*.as" to="*"/>
+						<packagemapper from="${src.dir}\*.mxml" to="*"/>
+						<packagemapper from="${src.dir}/*.as" to="*"/>
+						<packagemapper from="${src.dir}/*.mxml" to="*"/>
+					</compositemapper>
+				</pathconvert>
+
+				<!-- Finally, collect all of the required framework swcs...-->	
+				<fileset dir="${flex.sdk.dir}/frameworks" id="framework.swcs.fileset">
+					<include name="libs/*" />
+					<include name="locale/${locale}/*" />
+				</fileset>	
+				<pathconvert refid="framework.swcs.fileset" property="framework.swcs" pathsep=","/>
+
+				<!-- Build the actual swc -->
+				<echo message="Starting compc..." />
+				<exec executable="${compc.bin}" dir="${bin.dir}" failonerror="true">
+
+					<arg value="-output=ivtflexlib.swc" />
+					<arg value="-target-player=${target.player}" />
+					<!--<arg line="-keep-generated-actionscript=true" />-->
+					<arg value="-theme=${flex.sdk.dir}/frameworks/libs/spark.swc" />
+					<arg value="-compiler.optimize=true" />
+					<arg value="-compiler.debug=${debug-build}" />
+					<arg value="-load-config=${flex.sdk.dir}/frameworks/flex-config.xml"/>
+					<arg value="-include-classes=${swc.include.classes}" />
+					<arg value="-benchmark=true" />
+
+					<arg value="-compiler.source-path=${src.dir}" />
+					
+					<!-- The built-in framework flex swcs -->
+					<arg value="-compiler.library-path=${framework.swcs}" />
+
+				</exec>
+			</sequential>
+		</outofdate>
+		<echo message="Done!" />
+	</target> 
+	
+</project>

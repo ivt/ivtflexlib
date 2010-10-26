@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group xmlns:fx="http://ns.adobe.com/mxml/2009" 
+		 xmlns:s="library://ns.adobe.com/flex/spark"
+		 xmlns:mx="library://ns.adobe.com/flex/mx"
+		 xmlns:ivt="com.ivt.flex.controls.*"
+		 creationComplete="this.init()">
+	
+	<fx:Script>
+		<![CDATA[
+			import mx.collections.ArrayCollection;
+			import mx.validators.CreditCardValidatorCardType;
+			
+			[Bindable]
+			private var years:ArrayCollection = new ArrayCollection();
+			
+			[Bindable]
+			private var months:ArrayCollection = new ArrayCollection( [
+				{ data : '01', label : 'Jan' },
+				{ data : '02', label : 'Feb' },
+				{ data : '03', label : 'Mar' },
+				{ data : '04', label : 'Apr' },
+				{ data : '05', label : 'May' },
+				{ data : '06', label : 'Jun' },
+				{ data : '07', label : 'Jul' },
+				{ data : '08', label : 'Aug' },
+				{ data : '09', label : 'Sep' },
+				{ data : '10', label : 'Oct' },
+				{ data : '11', label : 'Nov' },
+				{ data : '12', label : 'Dec' }] );
+			
+			[Bindable]
+			private var _isValid:Boolean = false;
+			
+			[Bindable] 
+			private var _requiredFields:Array = [ 'cardNumber', 'cardCVV', 'nameOnCard' ];
+			
+			private function init():void
+			{
+				var today:Date = new Date();
+				
+				for( var i:Number = today.getFullYear(); i < ( today.getFullYear() + 8 ); i++ )
+				{
+					this.years.addItem( i );
+				}
+				
+				this.expiryYear.selectedIndex = 0;
+				this.expiryMonth.selectedIndex = today.getMonth();
+			}
+			
+			public function get isValid():Boolean
+			{
+				return this._isValid;
+			}
+			
+		]]>
+	</fx:Script>
+	
+	<fx:Declarations>
+		
+		<mx:ArrayList id="ccType">
+			<fx:Object label="Visa"
+					   data="{CreditCardValidatorCardType.VISA}" />
+			<fx:Object label="Master Card"
+					   data="{CreditCardValidatorCardType.MASTER_CARD}" />
+			<!--<fx:Object label="American Express"
+			data="{CreditCardValidatorCardType.AMERICAN_EXPRESS}" />
+			<mx:Object label="Diners Club"
+			data="{CreditCardValidatorCardType.DINERS_CLUB}" />
+			<mx:Object label="Discover"
+			data="{CreditCardValidatorCardType.DISCOVER}" />-->
+		</mx:ArrayList>
+		
+		<fx:Model id="creditcard">
+			<card>    
+				<cardType>{this.cardType.selectedItem.data}</cardType>
+				<cardNumber>{this.cardNumber.text}</cardNumber>
+			</card>
+		</fx:Model>
+		
+		<mx:CreditCardValidator
+			id="validateCardNumber"
+			cardTypeProperty="cardType"
+			cardNumberProperty="cardNumber"
+			cardNumberListener="{this.cardNumber}"
+			cardTypeListener="{this.cardType}"
+			cardNumberSource="{this.creditcard}"
+			cardTypeSource="{this.creditcard}"/>
+		
+		<mx:StringValidator
+			id="validateCVV"
+			required="true"
+			property="text"
+			source="{this.cardCVV}"/>
+		
+		<mx:StringValidator
+			id="validateNameOnCard"
+			required="true"
+			property="text"
+			source="{this.nameOnCard}"/>
+		
+	</fx:Declarations>
+	
+	<mx:Form
+		width="100%">
+		
+		<mx:FormItem
+			label="Card Type"
+			width="100%"
+			required="true">
+			
+			<ivt:DropDownList
+				dataProvider="{this.ccType}"
+				id="cardType"
+				width="100%"/>
+			
+		</mx:FormItem>
+		
+		<mx:FormItem
+			label="Name on Card"
+			width="100%"
+			required="true">
+			
+			<ivt:TextInput
+				id="nameOnCard"
+				width="100%"/>
+			
+		</mx:FormItem>
+		
+		<mx:FormItem
+			label="Card Number"
+			width="100%"
+			required="true">
+			
+			<ivt:TextInput
+				id="cardNumber"
+				maxChars="16"
+				restrict="0-9"
+				width="100%"/>
+			
+		</mx:FormItem>
+		
+		<mx:FormItem
+			label="Card Expiry"
+			direction="horizontal"
+			required="true">
+			
+			<ivt:DropDownList
+				id="expiryMonth"
+				width="85"
+				dataProvider="{this.months}"/>
+			
+			<ivt:DropDownList
+				id="expiryYear"
+				width="85"
+				dataProvider="{this.years}"/>
+			
+		</mx:FormItem>
+		
+		<mx:FormItem
+			label="Card CVV"
+			direction="horizontal"
+			required="true">
+			
+			<ivt:TextInput
+				id="cardCVV"
+				width="85"/>
+			
+		</mx:FormItem>
+		
+	</mx:Form>
+	
+</s:Group>

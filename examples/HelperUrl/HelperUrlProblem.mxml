@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Application
+	xmlns:fx="http://ns.adobe.com/mxml/2009"
+	xmlns:s="library://ns.adobe.com/flex/spark"
+	xmlns:mx="library://ns.adobe.com/flex/mx">
+
+	<s:layout>
+		<s:VerticalLayout gap="10" horizontalAlign="center"/>
+	</s:layout>
+
+	<fx:Script>
+		<![CDATA[
+			private function navigateTo():void
+			{
+				for each ( var url:String in this.inputUrlList.selectedItems )
+				{
+					navigateToURL( new URLRequest( url ), "_blank" );
+				}
+			}
+
+		]]>
+	</fx:Script>
+
+	<s:Label>
+		<s:text>
+Select multiple items from the list (Ctrl + click) and click 'Navigate To'.
+Only the first url will be navigated to, the rest will be ignored.
+		</s:text>
+	</s:Label>
+
+	<s:List
+		id="inputUrlList"
+		allowMultipleSelection="true">
+
+		<s:ArrayList>
+			<fx:String>http://www.ivt.com.au</fx:String>
+			<fx:String>http://www.brillianz.com</fx:String>
+			<fx:String>http://www.google.com</fx:String>
+			<fx:String>http://www.bing.com</fx:String>
+		</s:ArrayList>
+		
+	</s:List>
+
+	<s:Button
+		label="Navigate To"
+		click="this.navigateTo()" />
+
+</s:Application>
