@@ -15,6 +15,15 @@
 			</not>
 		</condition>
 	</fail>
+
+	<fail message="${line.separator}Please set the ANT_CONTRIB_JAR environment variable.${line.separator}This build script requires the antcontrib package to work. ${line.separator}You can find it at http://ant-contrib.sourceforge.net">
+		<condition>
+			<not>
+				<available file="${env.ANT_CONTRIB_JAR}"/>
+			</not>
+		</condition>
+	</fail>
+
 	<property name="flex.sdk.dir" location="${env.FLEX_HOME}" />
 	<property name="compc.bin" location="${flex.sdk.dir}/bin/compc" />
 	
@@ -28,10 +37,10 @@
 	<!-- ================= EXTERNAL TASKS ================== -->
 
 	<!-- These third party tasks are used for the <outofdate> macro. -->
-	<property name="ant.libs.dir" value="${ivtflexlib.dir}/lib/ant" />
+	<property name="ant.libs.dir" value="${env.ANT_CONTRIB_JAR}" />
 	<taskdef resource="net/sf/antcontrib/antcontrib.properties">
 		<classpath>
-			<pathelement location="${ant.libs.dir}/ant-contrib-1.0b3.jar"/>
+			<pathelement location="${env.ANT_CONTRIB_JAR}"/>
 		</classpath>
 	</taskdef>
 
