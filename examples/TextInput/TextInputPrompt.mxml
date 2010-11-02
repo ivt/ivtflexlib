@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Application
+	xmlns:fx="http://ns.adobe.com/mxml/2009"
+	xmlns:s="library://ns.adobe.com/flex/spark"
+	xmlns:mx="library://ns.adobe.com/flex/mx"
+	xmlns:ivt="com.ivt.flex.controls.*">
+
+	<s:layout>
+		<s:VerticalLayout gap="10" horizontalAlign="center"/>
+	</s:layout>
+
+	<s:Label>
+		<s:text>
+When not selected, the text input will display a greyed out prompt. When the user selects the text input and the prompt is showing, it will remove and present an empty input control.
+		</s:text>
+	</s:Label>
+
+	<mx:Form width="300">
+
+		<mx:FormItem 
+			label="Address" 
+			width="100%">
+
+			<ivt:TextInput
+				id="inputAddress"
+				prompt="Enter your full address"
+				width="100%"/>
+
+		</mx:FormItem>
+
+		<mx:FormItem 
+			label="Date of Birth"
+			width="100%">
+
+			<ivt:TextInput
+				id="inputDOB"
+				prompt="dd/mm/yyyy"
+				width="100%"/>
+
+		</mx:FormItem>
+
+	</mx:Form>
+
+</s:Application>

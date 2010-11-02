@@ -2,7 +2,7 @@
 <s:Application
 	xmlns:fx="http://ns.adobe.com/mxml/2009"
 	xmlns:s="library://ns.adobe.com/flex/spark"
-	xmlns:mx="library://ns.adobe.com/flex/mx"
+	xmlns:mx="library://ns.adobe.com/flex/halo"
 	xmlns:ivt="com.ivt.flex.controls.*">
 
 	<s:layout>
@@ -14,7 +14,6 @@
 
 		import mx.collections.ArrayCollection;
 
-		[Bindable]
 		private var dataProvider:ArrayCollection = new ArrayCollection( [ 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten' ] );
 
 		private function performFilter( filterText:String ):void
@@ -30,7 +29,7 @@
 		]]>
 	</fx:Script>
 
-	<s:Label>
+	<s:Label width="{inputList.width}">
 		<s:text>
 Enter text into both the filters and notice that the delayed one will wait longer before performing the filter.
 		</s:text>
@@ -62,16 +61,7 @@ Enter text into both the filters and notice that the delayed one will wait longe
 				delay="{this.inputDelayAmount.value}"
 				delayedChange="this.performFilter( this.inputDelayedFilter.text )"/>
 
-		</mx:FormItem>
-
-		<mx:FormItem label="Delay Amount (milliseconds)">
-
-			<s:NumericStepper 
-				id="inputDelayAmount" 
-				minimum="200" 
-				maximum="2000" 
-				stepSize="100" 
-				value="500" />
+			<s:NumericStepper id="inputDelayAmount" value="500" />
 
 		</mx:FormItem>
 

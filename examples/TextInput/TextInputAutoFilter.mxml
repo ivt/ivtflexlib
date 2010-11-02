@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Application
+	xmlns:fx="http://ns.adobe.com/mxml/2009"
+	xmlns:s="library://ns.adobe.com/flex/spark"
+	xmlns:mx="library://ns.adobe.com/flex/mx"
+	xmlns:ivt="com.ivt.flex.controls.*">
+
+	<s:layout>
+		<s:VerticalLayout gap="10" horizontalAlign="center"/>
+	</s:layout>
+
+	<fx:Script>
+		<![CDATA[
+
+		import mx.collections.ArrayCollection;
+
+		[Bindable]
+		private var dataProvider:ArrayCollection = new ArrayCollection
+		([ 
+			{ label : 'one', number : 1, position : '1st' }, 
+			{ label : 'two', number : 2, position : '2nd' }, 
+			{ label : 'three', number : 3, position : '3rd' }, 
+			{ label : 'four', number : 4, position : '4th' }, 
+			{ label : 'five', number : 5, position : '5th' }, 
+			{ label : 'six', number : 6, position : '6th' }, 
+			{ label : 'seven', number : 7, position : '7th' }, 
+			{ label : 'eight', number : 8, position : '8th' }, 
+			{ label : 'nine', number : 9, position : '9th' }, 
+			{ label : 'ten', number : 10, position : '10th' }, 
+		]);
+
+		]]>
+	</fx:Script>
+
+	<s:Label>
+		<s:text>
+The filter input will automatically apply a filter to the dataProvider of the datagrid.
+You can customize which properties to filter on, and also which items *not* to filter.
+In this example, the selected item will never be filtered.
+		</s:text>
+	</s:Label>
+
+	<!-- This list will be filtered by the performFilter function, either immediately after the Instance filter has
+		been modified, or after a certain amount of time if the Delayed filter has changed (specified by inputDelayAmount)
+		-->
+	<mx:DataGrid
+		id="inputDataGrid"
+		dataProvider="{ this.dataProvider }" />
+
+	<mx:Form>
+
+		<mx:FormItem label="Filter">
+
+			<!-- Immediately after every change in the text, we will filter the list -->
+			<ivt:FilterInput
+				id="inputFilter"
+				dataProvider="{ this.dataProvider }"
+				filterProperties="{ [ 'label', 'position' ] }"
+				excludeFromFilter="{ [ this.inputDataGrid.selectedItem ] }" />
+
+		</mx:FormItem>
+
+	</mx:Form>
+
+</s:Application>
