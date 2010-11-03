@@ -2,67 +2,115 @@
 <s:Application
 	xmlns:fx="http://ns.adobe.com/mxml/2009"
 	xmlns:s="library://ns.adobe.com/flex/spark"
-	xmlns:mx="library://ns.adobe.com/flex/halo"
+	xmlns:mx="library://ns.adobe.com/flex/mx"
 	xmlns:ivt="com.ivt.flex.controls.*">
 
 	<s:layout>
 		<s:VerticalLayout gap="10" horizontalAlign="center"/>
 	</s:layout>
 
-	<fx:Script>
-		<![CDATA[
+	<fx:Declarations>
 
-		import mx.collections.ArrayCollection;
+		<fx:Component className="TextFocusSkin">
+			<s:SparkSkin>
 
-		private var dataProvider:ArrayCollection = new ArrayCollection( [ 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten' ] );
+				<fx:Metadata>
+					[HostComponent("spark.components.TextInput")]
+				</fx:Metadata>
 
-		private function performFilter( filterText:String ):void
-		{
-			dataProvider.filterFunction =
-				function ( item:String ):Boolean
-				{
-					return ( item.toLowerCase().indexOf( filterText.toLowerCase() ) !== -1 );
-				};
-			dataProvider.refresh();
-		}
+				<s:states>
+					<s:State name="normal"/>
+					<s:State name="disabled"/>
+					<s:State name="focused"/>
+					<s:State name="invalid"/>
+				</s:states>
 
-		]]>
-	</fx:Script>
+				<s:transitions>
+					<s:Transition
+						fromState="normal"
+						toState="focused" >
+						<s:AnimateColor
+							duration="300"
+							targets="{[bgColour1, bgColour2, stroke]}" />
+					</s:Transition>
+					<s:Transition
+						fromState="focused"
+						toState="normal">
+						<s:AnimateColor
+							duration="300"
+							targets="{[bgColour1, bgColour2, stroke]}" />
+					</s:Transition>
+				</s:transitions>
 
-	<s:Label width="{inputList.width}">
+				<s:Rect
+					blendMode="normal"
+					left="1"
+					right="1"
+					top="1"
+					bottom="1"
+					radiusX="5"
+					radiusY="5"
+					alpha="1">
+					<s:fill>
+						<mx:LinearGradient
+							id="bgFill"
+							rotation="90">
+							<mx:entries>
+								<mx:GradientEntry
+									color="0xffffff"
+									color.focused="0xeaeaea"
+									ratio="0.00"
+									id="bgColour1"/>
+								<mx:GradientEntry
+									color="0xffffff"
+									color.focused="0xffffff"
+									ratio="1.00"
+									id="bgColour2"/>
+							</mx:entries>
+						</mx:LinearGradient>
+					</s:fill>
+					<s:stroke>
+						<s:SolidColorStroke
+							id="stroke"
+							color="0xcccccc"
+							color.focused="{this.getStyle( 'primaryColour' )}"
+							weight="0.5" />
+					</s:stroke>
+				</s:Rect>
+
+				<s:RichEditableText
+					id="textDisplay"
+					color.focused="0x303030"
+					color.invalid="0xff0000"
+					verticalAlign="middle"
+					widthInChars="10"
+					left="9" right="9" top="9" bottom="9" />
+
+			</s:SparkSkin>
+		</fx:Component>
+
+	</fx:Declarations>
+
+	<s:Label>
 		<s:text>
-Enter text into both the filters and notice that the delayed one will wait longer before performing the filter.
+Here, the focused state is used to display a transition when selecting or deselecting a text input.
 		</s:text>
 	</s:Label>
 
-	<!-- This list will be filtered by the performFilter function, either immediately after the Instance filter has
-		been modified, or after a certain amount of time if the Delayed filter has changed (specified by inputDelayAmount)
-		-->
-	<s:List
-		id="inputList"
-		dataProvider="{ this.dataProvider }" />
-
 	<mx:Form>
 
-		<mx:FormItem label="Instant filter">
-
-			<!-- Immediately after every change in the text, we will filter the list -->
-			<s:TextInput
-				id="inputInstantFilter"
-				change="this.performFilter( this.inputInstantFilter.text )"/>
-
+		<mx:FormItem label="First Name">
+			<ivt:TextInput skinClass="TextFocusSkin"/>
 		</mx:FormItem>
 
-		<mx:FormItem label="Delayed filter">
-
-			<!-- Wait for {inputDelayAmount.value} milliseconds after every change in the text before we filter the list -->
+		<mx:FormItem label="Middle Initial">
 			<ivt:TextInput
-				id="inputDelayedFilter"
-				delay="{this.inputDelayAmount.value}"
-				delayedChange="this.performFilter( this.inputDelayedFilter.text )"/>
+				width="50"
+				skinClass="TextFocusSkin" />
+		</mx:FormItem>
 
-			<s:NumericStepper id="inputDelayAmount" value="500" />
-
+		<mx:FormItem label="Last Name">
+			<ivt:TextInput skinClass="TextFocusSkin" />
 		</mx:FormItem>
 
 	</mx:Form>
