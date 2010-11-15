@@ -86,9 +86,12 @@ package com.ivt.flex.controls
 
 		protected function onMouseDown( event:MouseEvent ):void
 		{
-			this._startX = super.mouseX;
-			this._startY = super.mouseY;
-			this._drawing = true;
+			if( this.enabled )
+			{
+				this._startX = super.mouseX;
+				this._startY = super.mouseY;
+				this._drawing = true;
+			}
 		}
 
 		protected function onMouseUp( event:MouseEvent ):void

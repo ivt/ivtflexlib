@@ -1,5 +1,6 @@
 package com.ivt.flex.containers
 {
+	import mx.core.IVisualElement;
 
 	import spark.components.Group;
 
@@ -18,9 +19,13 @@ package com.ivt.flex.containers
 
 		override public function get baselinePosition():Number
 		{
-			if( this.numElements > 0 )
+			for( var ii:int = 0; ii < this.numElements; ii++ )
 			{
-				return this.getElementAt( 0 ).baselinePosition;
+				var element:IVisualElement = this.getElementAt( ii );
+				if( element && element.visible )
+				{
+					return element.baselinePosition;
+				}
 			}
 			return super.baselinePosition;
 		}
