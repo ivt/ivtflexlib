@@ -98,7 +98,7 @@ package com.ivt.flex.utils
 		 * If it is a number, we presume it is an actionscript timestamp (time since epoch in MILLIseconds).
 		 * Returns null if we cannot convert it.
 		 */
-		public static function fromMiscFormat( date:Object ):Date
+		public static function fromMiscFormat( date:Object, convertUTC:Boolean = true ):Date
 		{
 			if ( date is Date )
 			{
@@ -109,7 +109,7 @@ package com.ivt.flex.utils
 				var dateStr:String = date as String;
 				if( dateStr.indexOf( ":" ) >= 0 )
 				{
-					return fromMySQLDateTime( dateStr );
+					return fromMySQLDateTime( dateStr, convertUTC );
 				}
 				else
 				{
