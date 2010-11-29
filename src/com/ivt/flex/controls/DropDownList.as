@@ -6,6 +6,7 @@ package com.ivt.flex.controls
 	import com.ivt.flex.controls.listClasses.SelectableIndentedItemRenderer;
 
 	import flash.events.*;
+	import flash.utils.getTimer;
 
 	import mx.core.ClassFactory;
 	import mx.core.mx_internal;
@@ -26,6 +27,7 @@ package com.ivt.flex.controls
 		public var sizeToFit:Boolean = false;
 		public var isHeaderFunction:Function;
 		public var isEnabledFunction:Function;
+		public var typeAheadTimeout:int = 1000; // 1 second
 
 		public function DropDownList()
 		{
@@ -39,6 +41,8 @@ package com.ivt.flex.controls
 		private var _selectedProperty:Object = null;
 		private var _selectedPropertyChanged:Boolean = false;
 		private var _dataProviderChanged:Boolean = false;
+		private var _findString:String = "";
+		private var _lastKeyDownTime:int = 0;
 
 		/**
 		 * Lazily finds out the selected property based on the currently selected item.
@@ -255,6 +259,42 @@ package com.ivt.flex.controls
             super.setSelectedIndices(newValue, dispatchChangeEvent);
         }
 
+		override mx_internal function findKey( eventCode:int ):Boolean
+		{
+			if( !this.dataProvider || this.dataProvider.length == 0 )
+			{
+				return false;
+			}
+
+			if( eventCode >= 33 && eventCode <= 126 )
+			{
+				var matchingIndex:Number;
+				this._findString += String.fromCharCode( eventCode );
+				var startIndex:int = this.isDropDownOpen ? this.userProposedSelectedIndex  + 1 : this.selectedIndex + 1;
+				startIndex = Math.max( 0, startIndex );
+
+				matchingIndex = findStringLoop( this._findString, startIndex, this.dataProvider.length );
+
+				// We didn't find the item, loop back to the top
+				if( matchingIndex == -1 )
+				{
+					matchingIndex = this.findStringLoop( this._findString, 0,  startIndex );
+				}
+
+				if( matchingIndex != -1 )
+				{
+					if( this.isDropDownOpen )
+						this.changeHighlightedSelection( matchingIndex );
+					else
+						this.setSelectedIndex( matchingIndex, true );
+
+					return true;
+				}
+			}
+
+			return false;
+		}
+
         /**
          *  Override the keyDownHandler() to skip unselectable items
          */
@@ -264,6 +304,14 @@ package com.ivt.flex.controls
             {
                 return;
             }
+
+	        // Reset type ahead find string if necessary
+	        var time:int = getTimer();
+	        if( time - this._lastKeyDownTime > this.typeAheadTimeout )
+	        {
+		        this._findString = "";
+	        }
+	        this._lastKeyDownTime = time;
 
             if( !this.dropDownController.processKeyDown( event ) )
             {
