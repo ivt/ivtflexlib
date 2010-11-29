@@ -27,6 +27,7 @@
 		top="0"
 		right="{(hostComponent.height * 0.85) + 5}"
 		height="50%"
+		enabled="{hostComponent.enabled}"
 		skinClass="spark.skins.spark.NumericStepperIncrementButtonSkin" />
 
 	<s:Button
@@ -34,6 +35,7 @@
 		right="{(hostComponent.height * 0.85) + 5}"
 		bottom="0"
 		height="50%"
+		enabled="{hostComponent.enabled}"
 		skinClass="spark.skins.spark.NumericStepperDecrementButtonSkin" />
 
 	<s:TextInput
@@ -41,14 +43,16 @@
 		left="0"
 		top="0"
 		right="{(hostComponent.height * 0.85) + 23}"
-		bottom="0"/>
+		bottom="0"
+		enabled="{hostComponent.enabled}" />
 
 	<s:Graphic
 		id="inputIcon"
 		top="{(hostComponent.height * 0.075)}"
 		right="0"
 		width="{hostComponent.height * 0.85}"
-		height="85%">
+		height="85%"
+		enabled="{hostComponent.enabled}">
 		<s:BitmapImage
 			width="100%" height="100%"
 			source="{IconAssets.TODAY_16}" />
