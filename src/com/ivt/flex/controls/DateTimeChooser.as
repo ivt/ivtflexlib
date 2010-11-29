@@ -8,6 +8,7 @@ package com.ivt.flex.controls
 	import flash.events.KeyboardEvent;
 	import flash.events.MouseEvent;
 	import flash.geom.Point;
+	import flash.geom.Rectangle;
 	import flash.text.engine.FontWeight;
 	import flash.ui.Keyboard;
 	
@@ -23,6 +24,7 @@ package com.ivt.flex.controls
 	import mx.events.SandboxMouseEvent;
 	import mx.formatters.DateFormatter;
 	import mx.managers.IFocusManagerComponent;
+	import mx.managers.ISystemManager;
 	import mx.managers.PopUpManager;
 
 	import spark.components.TextInput;
@@ -571,12 +573,41 @@ package com.ivt.flex.controls
 				this._dateChooser.selectableRange = { rangeStart:this._minDateTime, rangeEnd:this._maxDateTime };
 			}
 
+			// Position date chooser to the right and down
 			var point:Point = new Point( 0, 0 );
 			if( this.inputIcon )
 			{
 				point.x = this.inputIcon.x;
 			}
 			point = this.localToGlobal( point );
+
+			// Adjust to ensure it's always on screen
+			var sm:ISystemManager = this.systemManager.topLevelSystemManager;
+			var screen:Rectangle = sm.getVisibleApplicationRect();
+			if( screen.right > this._dateChooser.getExplicitOrMeasuredWidth() + point.x )
+			{
+				// DateChooser fits to the right
+				if( screen.bottom < this._dateChooser.getExplicitOrMeasuredHeight() + point.y )
+				{
+					// But not down
+					point.y -= this._dateChooser.getExplicitOrMeasuredHeight();
+				}
+			}
+			else
+			{
+				// DateChooser doesn't fit to the right
+				point.x -= this._dateChooser.getExplicitOrMeasuredWidth() - this.inputIcon.width;
+				if( screen.bottom < this._dateChooser.getExplicitOrMeasuredHeight() + point.y )
+				{
+					// Doesn't fit down either
+					point.y -= this._dateChooser.getExplicitOrMeasuredHeight();
+				}
+				else
+				{
+					point.y += this.unscaledHeight;
+				}
+			}
+
 			this._dateChooser.move( point.x, point.y );
 
 			// Make sure that the text field has focus
