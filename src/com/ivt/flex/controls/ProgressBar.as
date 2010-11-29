@@ -185,7 +185,6 @@ package com.ivt.flex.controls
 		{
 			this.value = event.bytesLoaded;
 			this.maximum = event.bytesTotal;
-			trace( event );
 			this.invalidateDisplayList();
 		}
 
