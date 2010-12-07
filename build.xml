@@ -120,5 +120,58 @@
 		</outofdate>
 		<echo message="Done!" />
 	</target> 
+
+	<!-- =================================
+		Adapted from http://adiflex.wordpress.com/rsl/
+	-->
+	
+	<target name="swc-to-rsl" description="Extracts library.swf from a swc, optimizes it, recalculates the digest, and puts it back inside the swc.">
+
+		<macrodef name="create-rsl">
+
+			<attribute name="lib-name"/>
+			<attribute name="dir-name"/>
+
+			<sequential>
+
+				<unzip src="@{dir-name}/@{lib-name}.swc" dest="@{dir-name}" >
+					<patternset>
+						<include name="library.swf" />
+					</patternset>
+				</unzip>
+
+				<echo message="Optimizing '@{dir-name}/library.swf' to '@{dir-name}/@{lib-name}.swf'..." />
+				<exec executable="${flex.sdk.dir}/bin/optimizer" failonerror="true">
+					<arg value="--input=@{dir-name}/library.swf" />
+					<arg value="--output=@{dir-name}/@{lib-name}.swf" />
+					<arg value="--keep-as3-metadata='Bindable,Managed,ChangeEvent,NonCommittingChangeEvent,Transient'" />
+				</exec>
+
+				<echo message="Recreating digest from '@{dir-name}/@{lib-name}.swf' and applying to ${dir-name}/@{lib-name}.swc..." />
+				<exec executable="${flex.sdk.dir}/bin/digest" failonerror="true">
+					<arg value="--digest.rsl-file=@{dir-name}/@{lib-name}.swf" />
+					<arg value="--digest.swc-path=@{dir-name}/@{lib-name}.swc"/>
+				</exec>
+
+				<delete file="@{dir-name}/library.swf"/>
+
+			</sequential>
+
+		</macrodef>
+
+		<fail message="swc ${swc} not specified. Please pass -Dswc=pathtoswc to the ant task.">
+			<condition>
+				<not>
+					<available file="${swc}"/>
+				</not>
+			</condition>
+		</fail>
+	
+		<basename property="lib.name" file="${swc}" suffix=".swc" />
+		<dirname property="dir.name" file="${swc}" />
+		<create-rsl dir-name="${dir.name}" lib-name="${lib.name}"/>
+
+	</target>
+
 	
 </project>
