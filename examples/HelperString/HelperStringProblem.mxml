@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Application
+	xmlns:fx="http://ns.adobe.com/mxml/2009"
+	xmlns:s="library://ns.adobe.com/flex/spark"
+	xmlns:mx="library://ns.adobe.com/flex/mx"
+	creationComplete="this.creationComplete()">
+
+	<s:layout>
+		<s:VerticalLayout gap="10" horizontalAlign="center"/>
+	</s:layout>
+
+	<fx:Script>
+		<![CDATA[
+
+			import mx.collections.ArrayCollection;
+			import com.ivt.flex.utils.HelperString;
+
+			[Bindable]
+			private var _dataProvider:ArrayCollection = new ArrayCollection();
+
+			private function creationComplete():void
+			{
+				var list:Array = [ "1 thing", "2 things", "3 things", "4 things", "5 things", "6 things", "7 things", "8 things", "9 things", "10 things", "11 things" ];
+				for each ( var thing:String in list )
+				{
+					this._dataProvider.addItem( { normalLabel : thing, sortableLabel : HelperString.toSortFriendlyString( thing ) } );
+				}
+			}
+
+		]]>
+	</fx:Script>
+
+	<s:Label>
+		<s:text>
+Sort on both properties in the datagrid.
+Notice how the sortableLabel will sort correctly, whereas the normalLabel will put "11 things" BEFORE "2 things".
+The next step would be to write your own sort function to sort based on the correct sortable string, but only display the real string.
+		</s:text>
+	</s:Label>
+
+	<mx:DataGrid
+		dataProvider="{this._dataProvider}" />
+
+</s:Application>
