@@ -151,6 +151,18 @@ package com.ivt.flex.validators
 			return true;
 		}
 
+		public function getValidatorForField( field:Object ):Validator
+		{
+			for each( var validator:Validator in this.validators )
+			{
+				if( validator.source == field )
+				{
+					return validator;
+				}
+			}
+			return null;
+		}
+
 		// ----- IMXMLObject -----
 		public function initialized( document:Object, id:String ):void
 		{

@@ -522,5 +522,27 @@ package com.ivt.flex.utils
 			return ( midYear.getTimezoneOffset() - endYear.getTimezoneOffset() ) != 0 &&
 			       date.getTimezoneOffset() == Math.min( midYear.getTimezoneOffset(), endYear.getTimezoneOffset() );
 		}
+
+		/**
+		 * These are not the droi..err..functions you are looking for.
+		 */
+
+		public static function shiftToUtc( date:Date ):Date
+		{
+			var utc:Date = new Date();
+			utc.dateUTC = date.date;
+			utc.monthUTC = date.month;
+			utc.fullYearUTC = date.fullYear;
+			return utc;
+		}
+
+		public static function shiftFromUtc( utc:Date ):Date
+		{
+			var date:Date = new Date();
+			date.date = utc.dateUTC;
+			date.month = utc.monthUTC;
+			date.fullYear = utc.fullYearUTC;
+			return date;
+		}
 	}
 }
