@@ -195,5 +195,43 @@ import mx.utils.ArrayUtil;
 				return -1;
 			}
 		}
+
+		/**
+		 * Search through each item looking for an item where the property 'property' matches 'value'.
+		 * @param value
+		 * @param property
+		 * @param array
+		 * @return * Returns null if not found, the item otherwise.
+		 */
+		public static function getItemByProperty( value:Object, property:String, array:Object, childrenProperty:String = null ):*
+		{
+			if ( array == null || !array.hasOwnProperty( "length" ) )
+			{
+				return null;
+			}
+			else
+			{
+				for ( var i:int = 0; i < array.length; i ++ )
+				{
+					var item:Object = array[ i ];
+					if ( item != null )
+					{
+						if ( item.hasOwnProperty( property ) && item[ property ] == value )
+						{
+							return item;
+						}
+						else if ( childrenProperty != null && item.hasOwnProperty( childrenProperty ) )
+						{
+							item = getItemByProperty( value, property, item[ childrenProperty ], childrenProperty );
+							if ( item != null )
+							{
+								return item;
+							}
+						}
+					}
+				}
+				return null;
+			}
+		}
 	}
 }
