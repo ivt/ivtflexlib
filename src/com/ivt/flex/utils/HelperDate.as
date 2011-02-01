@@ -70,7 +70,7 @@ package com.ivt.flex.utils
 		 * Convert MySQL DATE into Date
 		 * Expects date to be in UTC format
 		 */
-		public static function fromMySQLDate( date:String ):Date
+		public static function fromMySQLDate( date:String, convertUTC:Boolean = true ):Date
 		{
 			if( date )
 			{
@@ -83,7 +83,14 @@ package com.ivt.flex.utils
 				}
 				
 				var newDate:Date = new Date();
-				newDate.setUTCFullYear( dateParts[0], Number( dateParts[1] ) - 1, Number( dateParts[2] ) );
+				if( convertUTC )
+				{
+					newDate.setUTCFullYear( dateParts[0], Number( dateParts[1] ) - 1, Number( dateParts[2] ) );
+				}
+				else
+				{
+					newDate.setFullYear( dateParts[0], Number( dateParts[1] ) - 1, Number( dateParts[2] ) );
+				}
 				
 				return newDate;
 			}
@@ -113,7 +120,7 @@ package com.ivt.flex.utils
 				}
 				else
 				{
-					return fromMySQLDate( dateStr );
+					return fromMySQLDate( dateStr, convertUTC );
 				}
 			}
 			else if ( date is Number )
