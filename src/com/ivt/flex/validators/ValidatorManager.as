@@ -31,6 +31,8 @@ package com.ivt.flex.validators
 	 *  The ValidatorManager component manages validators and automagically creates
 	 *  default validators for certain field types.
 	 *
+	 *  See: http://www.adobe.com/devnet/flex/quickstarts/validating_data.html
+	 *
 	 *  <p>Notice that the ValidatorManager component is a subclass of EventDispatcher,
 	 *  not UIComponent, and implements the IMXMLObject interface.
 	 *  The ValidatorManager component declaration must
@@ -279,7 +281,7 @@ package com.ivt.flex.validators
 
 			for each( var validator:Validator in this.validators )
 			{
-				valid = valid && this.isValidatorValid( validator, focusedControl );
+				valid = this.isValidatorValid( validator, focusedControl ) && valid;
 			}
 
 			this.isValid = valid;
@@ -308,7 +310,7 @@ package com.ivt.flex.validators
 			var valid:Boolean = true;
 
 			var component:UIComponent = validator.source as UIComponent;
-			if( !this.isComponentEnabled( component ) )
+			if( !this.isComponentEnabled( component ) || !validator.enabled )
 			{
 				validate = false;
 				component.errorString = "";

@@ -81,7 +81,7 @@ package com.ivt.flex.controls
 		 */
 		private function commitSelectedProperty():void
 		{
-			if ( ( this._selectedPropertyChanged || this._dataProviderChanged ) && this.dataProvider != null && this._propertyField != null )
+			if ( ( this._selectedPropertyChanged || this._dataProviderChanged ) && this.dataProvider != null && this._propertyField != null && this._selectedProperty != null )
 			{
 				this._selectedPropertyChanged = false;
 				this._dataProviderChanged = false;
@@ -91,6 +91,7 @@ package com.ivt.flex.controls
 					if ( item != null && item.hasOwnProperty( this._propertyField ) && item[ this._propertyField ] == this._selectedProperty )
 					{
 						this.selectedItem = item;
+						this._selectedProperty = null;
 
 						// Seems to work, but it didn't display the label for the selected item in some cases, so I will
 						// help it along... Hope this doesn't bust any display stuff.
