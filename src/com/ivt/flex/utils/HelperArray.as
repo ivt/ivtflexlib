@@ -201,6 +201,38 @@ import mx.utils.ArrayUtil;
 		 * @param value
 		 * @param property
 		 * @param array
+		 * @param ignoreCase
+		 * @return int Returns -1 if not found, the index otherwise.
+		 */
+		public static function getItemIndexByStringProperty( value:String, property:String, array:Object, ignoreCase:Boolean = true ):int
+		{
+			if ( array == null || !array.hasOwnProperty( "length" ) || value == null )
+			{
+				return -1;
+			}
+			else
+			{
+				for ( var i:int = 0; i < array.length; i ++ )
+				{
+					var item:Object = array[ i ];
+					if ( item != null && item.hasOwnProperty( property ) )
+					{
+						var itemStr:String = item[ property ] as String;
+						if( itemStr && (itemStr == value || (ignoreCase && itemStr.toUpperCase() == value.toUpperCase())) )
+						{
+							return i;
+						}
+					}
+				}
+				return -1;
+			}
+		}
+
+		/**
+		 * Search through each item looking for an item where the property 'property' matches 'value'.
+		 * @param value
+		 * @param property
+		 * @param array
 		 * @return * Returns null if not found, the item otherwise.
 		 */
 		public static function getItemByProperty( value:Object, property:String, array:Object, childrenProperty:String = null ):*
