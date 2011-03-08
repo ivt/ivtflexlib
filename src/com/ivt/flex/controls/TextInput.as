@@ -23,19 +23,22 @@ package com.ivt.flex.controls
 	 * All of them are optional, so if just used without specifying any details, it should act the same as a regular TextInput.
 	 *  - Focused skin state
 	 *  - Text prompt
+	 *  - Text prefix (useful for displaying currency for example)
 	 *  - Drop-in ItemRenderer support
-	 */	
+	 */
 	public class TextInput extends spark.components.TextInput implements IListItemRenderer, IDropInListItemRenderer
 	{
 		[SkinState("focused")]
 
 		public static const DELAYED_CHANGED:String = "delayedChange";
-		
+
 		private var _isFocused:Boolean;
 		private var _prompt:String = '';
+		private var _prefix:String = '';
+		private var _text:String = '';
 		protected var _prompting:Boolean = false;
 		private var _timer:Timer = new Timer( 0, 1 );
-		
+
 		public function TextInput()
 		{
 			super();
@@ -65,7 +68,7 @@ package com.ivt.flex.controls
 				this.setPrompting( this._prompting );
 			}
 		}
-		
+
 		override protected function partRemoved( partName:String, instance:Object ):void
 		{
 			super.partRemoved( partName, instance );
@@ -75,7 +78,7 @@ package com.ivt.flex.controls
 				this.textDisplay.removeEventListener( FocusEvent.FOCUS_OUT, this.onFocusOutHandler );
 			}
 		}
-		
+
 		private function onFocusInHandler( event:FocusEvent ):void
 		{
 			this._isFocused = true;
@@ -84,9 +87,13 @@ package com.ivt.flex.controls
 				super.text = '';
 				this.setPrompting( false );
 			}
+			else
+			{
+				super.text = this._text;
+			}
 			this.invalidateSkinState();
 		}
-		
+
 		private function onFocusOutHandler( event:FocusEvent ):void
 		{
 			this._isFocused = false;
@@ -94,6 +101,11 @@ package com.ivt.flex.controls
 			{
 				super.text = this._prompt;
 				this.setPrompting( true );
+			}
+			else
+			{
+				this._text = super.text;
+				super.text = this._prefix + this._text;
 			}
 			this.invalidateSkinState();
 
@@ -103,7 +115,7 @@ package com.ivt.flex.controls
 				this.onTimerDone( null );
 			}
 		}
-		
+
 		override protected function getCurrentSkinState():String
 		{
 			if( this._isFocused && this.skin )
@@ -119,10 +131,10 @@ package com.ivt.flex.controls
 
 			return super.getCurrentSkinState();
 		}
-	
+
 		/**
 		 * The text which is displayed in the text input when it is empty and does not have focus.
-		 */	
+		 */
 		public function get prompt():String { return this._prompt }
 		public function set prompt( value:String ):void
 		{
@@ -135,6 +147,15 @@ package com.ivt.flex.controls
 			}
 		}
 
+		/**
+		 * The text which is displayed before the text when it does not have focus.
+		 */
+		public function get prefix():String { return this._prefix }
+		public function set prefix( value:String ):void
+		{
+			this._prefix = value;
+		}
+
 		[Bindable]
 		override public function get text():String
 		{
@@ -143,7 +164,7 @@ package com.ivt.flex.controls
 				return "";
 			}
 
-			return super.text;
+			return this._isFocused ? super.text : this._text;
 		}
 
 		// Seem to need these or else the data binding in the sub class will not work...
@@ -164,6 +185,7 @@ package com.ivt.flex.controls
 				// code, it will end up calling this.text at some point, which will return nothing because we are prompting...
 				// Seems to stuff up validators...
 				this.setPrompting( true );
+				this._text = value;
 				super.text = this._prompt;
 			}
 			else
@@ -172,7 +194,8 @@ package com.ivt.flex.controls
 				// code, it will end up calling this.text at some point, which will return nothing because we are prompting...
 				// Seems to stuff up validators...
 				this.setPrompting( false );
-				super.text = value;
+				this._text = value;
+				super.text = this._prefix + (this._text != null ? this._text : "");
 			}
 		}
 

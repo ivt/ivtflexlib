@@ -194,7 +194,10 @@ package com.ivt.flex.controls
 		private function restoreFullList():void
 		{
 			this._matchingList = this._fullList;
-			(this.dataProvider as ListCollectionView).refresh();
+			if( this.dataProvider )
+			{
+				(this.dataProvider as ListCollectionView).refresh();
+			}
 		}
 
 		private function filterList( item:Object ):Boolean
