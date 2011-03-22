@@ -1,4 +1,4 @@
-package src
+package com.ivt.flex.collections
 {
 
 	import flash.events.Event;
