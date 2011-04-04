@@ -77,10 +77,13 @@ package com.ivt.flex.validators
 
 		public function reset():void
 		{
-			this.isValid = true;
+			this.isValid = false;
 			for each( var validator:Validator in this.validators )
 			{
-				validator.source.errorString = "";
+				if( validator && validator.source && validator.source.hasOwnProperty( "errorString" ) )
+				{
+					validator.source.errorString = "";
+				}
 			}
 		}
 
