@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:SparkSkin 
+	creationComplete="{ this.creationComplete( event ) }"
+	xmlns:fx="http://ns.adobe.com/mxml/2009" 
+	xmlns:s="library://ns.adobe.com/flex/spark" 
+	xmlns:mx="library://ns.adobe.com/flex/mx">
+	<fx:Script>
+		<![CDATA[
+			import mx.events.FlexEvent;
+			import mx.skins.spark.DateChooserNextMonthSkin;
+			import mx.skins.spark.DateChooserNextYearSkin;
+			import mx.skins.spark.DateChooserPrevMonthSkin;
+			import mx.skins.spark.DateChooserPrevYearSkin;
+			import mx.utils.ObjectUtil;
+			
+			[Bindable]
+			public var selectedDate:Date;
+			[Bindable]
+			public var today:Date = new Date();
+			
+			private var _minDate:Date;
+				
+			
+			private function creationComplete( event:FlexEvent ):void
+			{
+				this.selectedDate = new Date( today.fullYear, today.month );
+				this.monthName.text = this.month;
+				this.year.text = this.selectedDate.fullYear.toString();
+			}
+			
+			private function onPrevMonth( event:MouseEvent ):void
+			{
+				if( this._minDate != null )
+				{
+					if( ObjectUtil.dateCompare( new Date( this.selectedDate.fullYear, this.selectedDate.month-1 ), this._minDate ) != -1 )
+					{
+						this.selectedDate = new Date( this.selectedDate.fullYear, this.selectedDate.month-1 );
+						this.monthName.text = this.month;
+						this.year.text = this.selectedDate.fullYear.toString();
+					}
+				}
+				else
+				{
+					this.selectedDate = new Date( this.selectedDate.fullYear, this.selectedDate.month-1 );
+					this.monthName.text = this.month;
+					this.year.text = this.selectedDate.fullYear.toString();
+				}
+			}
+			
+			private function onNextMonth( event:MouseEvent ):void
+			{
+				this.selectedDate = new Date( this.selectedDate.fullYear, this.selectedDate.month+1 );
+				this.monthName.text = this.month;
+				this.year.text = this.selectedDate.fullYear.toString();
+			}
+			
+			private function onPrevYear( event:MouseEvent ):void
+			{
+				if( this._minDate != null )
+				{
+					if( ObjectUtil.dateCompare( new Date( this.selectedDate.fullYear-1, this.selectedDate.month ), this._minDate ) != -1 )
+					{
+						this.selectedDate = new Date( this.selectedDate.fullYear-1, this.selectedDate.month );
+						this.year.text = this.selectedDate.fullYear.toString();
+					}
+				}
+				else
+				{
+					this.selectedDate = new Date( this.selectedDate.fullYear-1, this.selectedDate.month );
+					this.year.text = this.selectedDate.fullYear.toString();
+				}
+			}
+			
+			private function onNextYear( event:MouseEvent ):void
+			{
+				this.selectedDate = new Date( this.selectedDate.fullYear+1, this.selectedDate.month );
+				this.year.text = this.selectedDate.fullYear.toString();
+			}
+			
+			public function set minDate( value:Date ):void
+			{
+				this._minDate = value;
+				
+				if( ObjectUtil.dateCompare( this._minDate, this.selectedDate ) == 1 )
+				{
+					this.selectedDate = new Date( this._minDate.fullYear, this._minDate.month );
+					this.monthName.text = this.month;
+					this.year.text = this.selectedDate.fullYear.toString();
+				}
+			}
+			
+			private function get month():String
+			{
+				var monthName:String;
+				
+				switch ( this.selectedDate.month )
+				{
+					case 0:
+						monthName = "January";
+						break;
+					
+					case 1:
+						monthName = "February";
+						break;
+					
+					case 2:
+						monthName = "March";
+						break;
+					
+					case 3:
+						monthName = "April";
+						break;
+					
+					case 4:
+						monthName = "May";
+						break;
+					
+					case 5:
+						monthName = "June";
+						break;
+					
+					case 6:
+						monthName = "July";
+						break;
+					
+					case 7:
+						monthName = "August";
+						break;
+					
+					case 8:
+						monthName = "September";
+						break;
+					
+					case 9:
+						monthName = "October";
+						break;
+					
+					case 10:
+						monthName = "November";
+						break;
+					
+					case 11:
+						monthName = "December";
+						break;
+				}
+				
+				return monthName
+			}
+			
+		]]>
+	</fx:Script>
+	<fx:Declarations>
+		<!-- Place non-visual elements (e.g., services, value objects) here -->
+	</fx:Declarations>
+	<s:HGroup>
+		<s:Button
+			id="prevMonth"
+			click="{ this.onPrevMonth( event ) }"
+			skinClass="mx.skins.spark.DateChooserPrevMonthSkin"/>
+		<s:Label
+			width="75"
+			id="monthName"/>
+		<s:Label
+			width="40"
+			id="year"/>
+		<s:VGroup
+			gap="0">
+			<s:Button
+				click="{ this.onNextYear( event ) }"			
+				skinClass="mx.skins.spark.DateChooserNextYearSkin"/>
+			<s:Button
+				click="{ this.onPrevYear( event ) }"
+				skinClass="mx.skins.spark.DateChooserPrevYearSkin"/>
+		</s:VGroup>
+		<s:Button
+			id="nextMonth"
+			click="{ this.onNextMonth( event ) }"
+			skinClass="mx.skins.spark.DateChooserNextMonthSkin"/>
+	</s:HGroup>
+</s:SparkSkin>
