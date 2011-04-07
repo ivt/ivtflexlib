@@ -265,5 +265,49 @@ import mx.utils.ArrayUtil;
 				return null;
 			}
 		}
+
+		/**
+		 * Search through each item looking for an item where the property 'property' matches 'value'.
+		 * @param value
+		 * @param property
+		 * @param array
+		 * @param ignoreCase
+		 * @return int Returns -1 if not found, the index otherwise.
+		 */
+		public static function getItemByStringProperty( value:String, property:String, array:Object, childrenProperty:String = null, ignoreCase:Boolean = true ):*
+		{
+			if ( array == null || !array.hasOwnProperty( "length" ) )
+			{
+				return -1;
+			}
+			else
+			{
+				for ( var i:int = 0; i < array.length; i ++ )
+				{
+					var item:Object = array[ i ];
+					if ( item != null )
+					{
+						var itemStr:String;
+						if ( item.hasOwnProperty( property ) && item[ property ] == value )
+						{
+							itemStr = item[ property ] as String;
+							if( itemStr && (itemStr == value || (ignoreCase && itemStr.toUpperCase() == value.toUpperCase())) )
+							{
+								return item;
+							}
+						}
+						else if ( childrenProperty != null && item.hasOwnProperty( childrenProperty ) )
+						{
+							item = getItemByStringProperty( value, property, item[ childrenProperty ], childrenProperty );
+							if ( item != null )
+							{
+								return item;
+							}
+						}
+					}
+				}
+				return null;
+			}
+		}
 	}
 }
