@@ -9,6 +9,9 @@ package com.ivt.flex.controls
 	public class Button extends spark.components.Button
 	{
 		[Bindable]
+		public var busy:Boolean = false;
+
+		[Bindable]
 		public var buttonDownPause:int = 1000; // 1 second by default
 
 		private var _buttonDownTime:int = 0;

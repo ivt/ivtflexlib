@@ -257,7 +257,7 @@ package com.ivt.flex.validators
 						// If this component is inside a form item, change the FormItems required flag to match the validator
 						if( component )
 						{
-							var parent:FormItem = component.parent as FormItem;
+							var parent:FormItem = this.getParentFormItem( component );
 							if( parent && parent.enabled )
 							{
 								parent.required = validator.required;
@@ -305,6 +305,21 @@ package com.ivt.flex.validators
 			}
 
 			return true;
+		}
+
+		private function getParentFormItem( component:UIComponent ):FormItem
+		{
+			while( component )
+			{
+				if( component is FormItem )
+				{
+					return component as FormItem;
+				}
+
+				component = component.parent as UIComponent;
+			}
+
+			return null;
 		}
 
 		private function isValidatorValid( validator:Validator, focusedObject:Object = null ):Boolean
