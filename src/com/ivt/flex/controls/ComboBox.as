@@ -81,30 +81,24 @@ package com.ivt.flex.controls
 		 */
 		private function commitSelectedProperty():void
 		{
-			if ( ( this._selectedPropertyChanged || this._dataProviderChanged ) && this.dataProvider != null && this._propertyField != null )
+			if ( ( this._selectedPropertyChanged || this._dataProviderChanged ) && this.dataProvider != null && this._propertyField != null && this._selectedProperty != null )
 			{
-				if( this._selectedProperty != null )
+				this._selectedPropertyChanged = false;
+				this._dataProviderChanged = false;
+				for ( var i:int = 0; i < this.dataProvider.length; i ++ )
 				{
-					this._selectedPropertyChanged = false;
-					this._dataProviderChanged = false;
-					for ( var i:int = 0; i < this.dataProvider.length; i ++ )
+					var item:Object = this.dataProvider.getItemAt( i );
+					if ( item != null && item.hasOwnProperty( this._propertyField ) && item[ this._propertyField ] == this._selectedProperty )
 					{
-						var item:Object = this.dataProvider.getItemAt( i );
-						if ( item != null && item.hasOwnProperty( this._propertyField ) && item[ this._propertyField ] == this._selectedProperty )
-						{
-							this.selectedItem = item;
-							this._selectedProperty = null;
+						this.selectedItem = item;
+						this._selectedProperty = null;
 
-							// Seems to work, but it didn't display the label for the selected item in some cases, so I will
-							// help it along... Hope this doesn't bust any display stuff.
-							this.updateLabelDisplay( item );
-							return;
-						}
+						// Seems to work, but it didn't display the label for the selected item in some cases, so I will
+						// help it along... Hope this doesn't bust any display stuff.
+						this.updateLabelDisplay( item );
+						break;
 					}
 				}
-
-				this.selectedIndex = NO_SELECTION;
-				this.textInput.text = "";
 			}
 		}
 
