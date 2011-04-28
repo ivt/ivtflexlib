@@ -20,6 +20,10 @@ package com.ivt.flex.layouts
 		private var _verticalGap:Number = 6;
 		private var _verticalAlign:String = "top";
 		private var _horizontalAlign:String = "left";
+		private var _paddingLeft:Number = 0;
+		private var _paddingRight:Number = 0;
+		private var _paddingTop:Number = 0;
+		private var _paddingBottom:Number = 0;
 		private var _lastElementBottomRight:Object = { x:0, y:0 };
 
 		public function FlowLayout()
@@ -136,6 +140,98 @@ package com.ivt.flex.layouts
 			}
 		}
 
+		[Inspectable(category="General")]
+
+		public function get paddingLeft():Number
+		{
+			return this._paddingLeft;
+		}
+
+		public function set paddingLeft( value:Number ):void
+		{
+			if( this._paddingLeft == value )
+			{
+				return;
+			}
+
+			this._paddingLeft = value;
+
+			var layoutTarget:GroupBase = this.target;
+			if( layoutTarget )
+			{
+				layoutTarget.invalidateDisplayList();
+			}
+		}
+
+		[Inspectable(category="General")]
+
+		public function get paddingRight():Number
+		{
+			return this._paddingRight;
+		}
+
+		public function set paddingRight( value:Number ):void
+		{
+			if( this._paddingRight == value )
+			{
+				return;
+			}
+
+			this._paddingRight = value;
+
+			var layoutTarget:GroupBase = this.target;
+			if( layoutTarget )
+			{
+				layoutTarget.invalidateDisplayList();
+			}
+		}
+
+		[Inspectable(category="General")]
+
+		public function get paddingTop():Number
+		{
+			return this._paddingTop;
+		}
+
+		public function set paddingTop( value:Number ):void
+		{
+			if( this._paddingTop == value )
+			{
+				return;
+			}
+
+			this._paddingTop = value;
+
+			var layoutTarget:GroupBase = this.target;
+			if( layoutTarget )
+			{
+				layoutTarget.invalidateDisplayList();
+			}
+		}
+
+		[Inspectable(category="General")]
+
+		public function get paddingBottom():Number
+		{
+			return this._paddingBottom;
+		}
+
+		public function set paddingBottom( value:Number ):void
+		{
+			if( this._paddingBottom == value )
+			{
+				return;
+			}
+
+			this._paddingBottom = value;
+
+			var layoutTarget:GroupBase = this.target;
+			if( layoutTarget )
+			{
+				layoutTarget.invalidateDisplayList();
+			}
+		}
+
 		public function getLastElementBottomRight():Object
 		{
 			return this._lastElementBottomRight;
@@ -208,10 +304,13 @@ package com.ivt.flex.layouts
 				}
 			}
 
-			layoutTarget.measuredWidth = maxWidth;
-			layoutTarget.measuredHeight = maxHeight;
-			layoutTarget.measuredMinWidth = maxWidth;
-			layoutTarget.measuredMinHeight = maxHeight;
+			var hPadding:Number = this._paddingLeft + this._paddingRight;
+            var vPadding:Number = this._paddingTop + this._paddingBottom;
+
+			layoutTarget.measuredWidth = maxWidth + hPadding;
+			layoutTarget.measuredHeight = maxHeight + vPadding;
+			layoutTarget.measuredMinWidth = maxWidth + hPadding;
+			layoutTarget.measuredMinHeight = maxHeight + vPadding;
 		}
 
 		override public function updateDisplayList( width:Number, height:Number ):void
@@ -237,14 +336,15 @@ package com.ivt.flex.layouts
 				getElementAt = layoutTarget.getElementAt
 			}
 
+			var targetWidth:Number = Math.max(0, width - this._paddingLeft - this._paddingRight );
 			var x:Number = 0;
-			var y:Number = 0;
+			var y:Number = this._paddingTop;
 			var row:int = 0;
 			var rowWidth:Array = [ 0 ];
 			var rowHeight:Array = [ 0 ];
 			var rowCount:Array = [ 0 ];
 			var maxWidth:Number = 0;
-			var maxHeight:Number = 0;
+			var maxHeight:Number = this._paddingTop;
 			var elementWidth:Number = 0;
 			var elementHeight:Number = 0;
 			var count:uint = layoutTarget.numElements;
@@ -260,7 +360,7 @@ package com.ivt.flex.layouts
 					elementWidth = element.getLayoutBoundsWidth();
 					elementHeight = element.getLayoutBoundsHeight();
 
-					if( x + elementWidth > width && x > 0 )
+					if( x + elementWidth > targetWidth && x > 0 )
 					{
 						x = 0;
 						y += rowHeight[ row ] + this._verticalGap;
@@ -270,7 +370,7 @@ package com.ivt.flex.layouts
 						row++;
 					}
 
-					element.setLayoutBoundsPosition( x, y );
+					element.setLayoutBoundsPosition( x + this._paddingLeft, y );
 
 					rowWidth[ row ] = x + elementWidth;
 					rowHeight[ row ] = Math.max( rowHeight[ row ], elementHeight );
@@ -284,7 +384,7 @@ package com.ivt.flex.layouts
 
 			this._lastElementBottomRight.x = x - this._horizontalGap;
 			this._lastElementBottomRight.y = y + rowHeight[ row ];
-			layoutTarget.setContentSize( maxWidth, maxHeight );
+			layoutTarget.setContentSize( maxWidth + this._paddingRight, maxHeight + this._paddingBottom );
 
 			// Second pass: if necessary, fix up height values based on the updated contentHeight
 			if( this._verticalAlign != "top" )
@@ -299,7 +399,7 @@ package com.ivt.flex.layouts
 						elementWidth = element.getLayoutBoundsWidth();
 
 						x += elementWidth;
-						if( x > width )
+						if( x > targetWidth )
 						{
 							x = elementWidth + this._horizontalGap;
 							row++;
@@ -328,7 +428,7 @@ package com.ivt.flex.layouts
 			{
 				x = 0;
 				row = 0;
-				var remain:Number = width - rowWidth[ row ];
+				var remain:Number = targetWidth - rowWidth[ row ];
 				var portion:Number = ( rowCount[ row ] > 0 ) ? remain / rowCount[ row ] : 0;
 				var offset:Number = 0;
 				for( ii = 0; ii < count; ii++ )
@@ -340,11 +440,11 @@ package com.ivt.flex.layouts
 						elementHeight = element.getLayoutBoundsHeight();
 
 						x += elementWidth;
-						if( x > width )
+						if( x > targetWidth )
 						{
 							x = elementWidth + this._horizontalGap;
 							row++;
-							remain = width - rowWidth[ row ];
+							remain = targetWidth - rowWidth[ row ];
 							portion = ( rowCount[ row ] > 0 ) ? remain / rowCount[ row ] : 0;
 							offset = 0;
 						}
