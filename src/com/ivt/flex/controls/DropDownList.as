@@ -131,6 +131,7 @@ package com.ivt.flex.controls
 		{
 			if ( ( this._selectedPropertyChanged || this._dataProviderChanged ) && this.dataProvider != null && this._propertyField != null )
 			{
+				var found:Boolean = false;
 				this._selectedPropertyChanged = false;
 				this._dataProviderChanged = false;
 				for ( var i:int = 0; i < this.dataProvider.length; i ++ )
@@ -138,6 +139,7 @@ package com.ivt.flex.controls
 					var item:Object = this.dataProvider.getItemAt( i );
 					if ( item != null && item.hasOwnProperty( this._propertyField ) && item[ this._propertyField ] == this._selectedProperty )
 					{
+						found = true;
 						this.selectedItem = item;
 
 						// Seems to work, but it didn't display the label for the selected item in some cases, so I will
@@ -145,6 +147,12 @@ package com.ivt.flex.controls
 						this.updateLabelDisplay( item );
 						break;
 					}
+				}
+
+				if( !found )
+				{
+					this.selectedItem = null;
+					this.updateLabelDisplay( null );
 				}
 			}
 		}
