@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<s:Group 
+	width="100%"
+	currentState="normal"
+	xmlns:fx="http://ns.adobe.com/mxml/2009" 
+	xmlns:s="library://ns.adobe.com/flex/spark" 
+	xmlns:mx="library://ns.adobe.com/flex/mx" 
+	xmlns:controls="com.ivt.flex.controls.*" >
+	<fx:Declarations>
+		<mx:CurrencyFormatter
+			id="currencyFormatter"
+			currencySymbol="{ this._currencySymbol }"
+			alignSymbol="left"
+			rounding="nearest"
+			precision="2"
+			useThousandsSeparator="true"
+			useNegativeSign="true"
+			thousandsSeparatorTo=","/>
+	</fx:Declarations>
+	<fx:Script>
+		<![CDATA[
+			import mx.events.FlexEvent;
+			import mx.events.IndexChangedEvent;
+			import mx.utils.StringUtil;
+			
+			import spark.events.TextOperationEvent;
+			
+			[Bindable]
+			private var _valueString:String;
+			[Bindable]
+			private var _value:Number = 0;
+			
+			[Bindable]
+			private var _currencySymbol:String = "$";
+			
+			public override function get baselinePosition():Number
+			{
+				return this.textInput.baselinePosition;
+			}
+			
+			public function get value():Number
+			{
+				return this._value;
+			}
+			
+			public function set value( value:Number ):void 
+			{
+				if( value is Number )
+				{
+					this._value = value;
+					this._valueString = this.currencyFormatter.format( this._value );
+				}
+			}
+			
+			public function set currencySymbol( symbol:String ):void
+			{
+				this._currencySymbol = symbol;
+				this._valueString = this.currencyFormatter.format( this._value );
+			}
+				
+			private function onFocusIn( event:FocusEvent ):void
+			{
+				this.currentState = 'selected';
+			}
+			
+			private function onFocusOut( event:FocusEvent ):void
+			{
+				this._value = Number( this.textInput.text );
+				this._valueString = this.currencyFormatter.format( this._value );
+				this.currentState = 'normal'; 
+			}
+
+		]]>
+	</fx:Script>
+	
+	<s:states>
+		<!-- Define the new view states. -->
+		<s:State name="selected"/>
+		<s:State name="normal"/>
+	</s:states>
+	<controls:TextInput
+		id="textInput"
+		focusIn="this.onFocusIn(event)"
+		focusOut="this.onFocusOut(event)"
+		text.normal="{ this._valueString }"
+		text.selected="{ this._value ? this._value : 0 }"
+		restrict.selected=".-0-9"
+		width="100%"/>
+</s:Group>
