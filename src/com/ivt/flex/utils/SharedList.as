@@ -14,6 +14,11 @@ package com.ivt.flex.utils
 			this.sourceList = source;
 		}
 
+		public function get sourceList():IList
+		{
+			return this._sourceList
+		}
+
 		public function set sourceList( value:IList ):void
 		{
 			if( this._sourceList != null )
