@@ -38,6 +38,7 @@ package com.ivt.flex.controls
 		private var _shrink:Boolean = true;
 		private var _shrinkLimit:int = 1000;
 		public  var sizeToFit:Boolean = false;
+		public  var autoFill:Boolean = true;
 
 		public function ComboBox()
 		{
@@ -93,6 +94,12 @@ package com.ivt.flex.controls
 		public function set matchType( value:String ):void
 		{
 			this._matchType = value;
+
+			// Don't autofill if we're not matching from the start of the text
+			if( this._matchType != "start" )
+			{
+				this.autoFill = false;
+			}
 		}
 
 		[Inspectable(category="General", minValue="0", defaultValue="1000")]
@@ -358,7 +365,7 @@ package com.ivt.flex.controls
 						var typedLength:int = this.textInput.text.length;
 						//super.changeHighlightedSelection( this.dataProvider.getItemIndex( this._matchingList.getItemAt( 0 ) ), true );
 						this.dropDownListBaseChangeHighlightedSelection( this.dataProvider.getItemIndex( this._matchingList.getItemAt( 0 ) ), true );
-						if( this._matchingList.getItemAt( 0 ) && this.matchType == "start" )
+						if( this.autoFill && this._matchingList.getItemAt( 0 ) )
 						{
 							// If we found a match, then replace the textInput text with the match and
 							// select the non-typed characters
