@@ -27,6 +27,8 @@ package com.ivt.flex.controls
 	import mx.managers.ISystemManager;
 	import mx.managers.PopUpManager;
 
+	import spark.components.RichEditableText;
+
 	import spark.components.TextInput;
 	import spark.components.supportClasses.ButtonBase;
 	import spark.components.supportClasses.SkinnableComponent;
@@ -135,7 +137,7 @@ package com.ivt.flex.controls
 		{
 			if( this.stage )
 			{
-				this.stage.focus = this.inputText.textDisplay;
+				this.stage.focus = this.inputText;
 			}
 		}
 
@@ -894,12 +896,16 @@ package com.ivt.flex.controls
 					this._spinnerValue = parseInt( values[ this._targetIndex ].value );
 				}
 
-				this.inputText.textDisplay.setFormatOfRange( this._normalFormat, 0, this.inputText.text.length );
-				this._targetStart = values[ this._targetIndex ].start;
-				this._targetEnd = values[ this._targetIndex ].end;
-				if( (this.focusManager.getFocus() == this) )
+
+				if ( this.inputText.textDisplay is RichEditableText )
 				{
-					this.inputText.textDisplay.setFormatOfRange( this._highlightFormat, this._targetStart, this._targetEnd );
+					( this.inputText.textDisplay as RichEditableText ).setFormatOfRange( this._normalFormat, 0, this.inputText.text.length );
+					this._targetStart = values[ this._targetIndex ].start;
+					this._targetEnd = values[ this._targetIndex ].end;
+					if( (this.focusManager.getFocus() == this) )
+					{
+						( this.inputText.textDisplay as RichEditableText ).setFormatOfRange( this._highlightFormat, this._targetStart, this._targetEnd );
+					}
 				}
 			}
 		}
