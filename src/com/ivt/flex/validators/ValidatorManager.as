@@ -5,6 +5,7 @@ package com.ivt.flex.validators
 	import flash.display.DisplayObject;
 	import flash.events.Event;
 	import flash.events.EventDispatcher;
+	import flash.events.FocusEvent;
 
 	import mx.containers.FormItem;
 	import mx.core.Container;
@@ -197,6 +198,7 @@ package com.ivt.flex.validators
 						var listBaseValidator:NumberValidator = new NumberValidator();
 						listBaseValidator.source = event.target[ field ];
 						listBaseValidator.property = "selectedIndex";
+						listBaseValidator.triggerEvent = FocusEvent.FOCUS_OUT;
 						listBaseValidator.minValue = 0;
 						listBaseValidator.lowerThanMinError = "A selection has not been made.";
 						listBaseValidator.required = true;
@@ -234,6 +236,17 @@ package com.ivt.flex.validators
 					else if( validator.source is RadioButtonGroup )
 					{
 						validator.source.addEventListener( ItemClickEvent.ITEM_CLICK, this.onRadioGroupChanged );
+					}
+					else if( validator.source is ListBase )
+					{
+						validator.source.addEventListener
+							(
+								FocusEvent.FOCUS_OUT,
+								function ( event:Event ):void
+								{
+									doValidate( validator.source as DisplayObject );
+								}
+							);
 					}
 					else
 					{
