@@ -451,7 +451,7 @@ package com.ivt.flex.controls
 			this.dispatchEvent( event );
 		}
 
-		override mx_internal function setSelectedIndex( value:int, dispatchChangeEvent:Boolean = false, changeCaret:Boolean = true ):void
+		override mx_internal function setSelectedIndex( value:int, dispatchChangeEvent:Boolean = false ):void
 		{
 			if( this.dataProvider && value >= 0 )
 			{

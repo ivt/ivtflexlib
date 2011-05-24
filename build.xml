@@ -26,12 +26,12 @@
 
 	<property name="flex.sdk.dir" location="${env.FLEX_HOME}" />
 	<property name="compc.bin" location="${flex.sdk.dir}/bin/compc" />
-
+	
 	<property name="bin.dir" location="${ivtflexlib.dir}/bin" />
 	<property name="src.dir" location="${ivtflexlib.dir}/src" />
 
 	<property name="locale" value="en_US" />
-	<property name="target.player" value="10.2.0" />
+	<property name="target.player" value="10.1.0" />
 	
 	
 	<!-- ================= EXTERNAL TASKS ================== -->
@@ -92,8 +92,7 @@
 				<!-- Finally, collect all of the required framework swcs...-->	
 				<fileset dir="${flex.sdk.dir}/frameworks" id="framework.swcs.fileset">
 					<include name="libs/*" />
-					<include name="libs/mx/*" />
-					<include name="locale/${locale}/*.swc" />
+					<include name="locale/${locale}/*" />
 				</fileset>	
 				<pathconvert refid="framework.swcs.fileset" property="framework.swcs" pathsep=","/>
 

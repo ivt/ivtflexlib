@@ -106,11 +106,11 @@ package com.ivt.flex.controls
 		 */
 		private function filterData( item:Object ):Boolean
 		{
-			if( this.text == null || this.text.length == 0 )
+			if( this._prompting )
 			{
 				return true;
 			}
-
+			
 			var filterText:String = this.text.toLowerCase();
 			var keep:Boolean = false;
 			

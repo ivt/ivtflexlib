@@ -171,44 +171,6 @@ package com.ivt.flex.controls
 			this.findTypicalItem();
 		}
 
-		/**
-		 * Override the setSelectedIndex() mx_internal method to not select an item that
-		 * is forbidden to be selected...
-		 */
-		override mx_internal function setSelectedIndex( value:int, dispatchChangeEvent:Boolean = false, changeCaret:Boolean = true ):void
-		{
-			if( value == this.selectedIndex )
-			{
-				return;
-			}
-
-			if( value >= 0 && this.dataProvider != null && value < this.dataProvider.length )
-			{
-				if( this.isSelectable( this.dataProvider.getItemAt( value ) ) != false )
-				{
-
-					if( dispatchChangeEvent )
-					{
-						this.dispatchChangeAfterSelection = dispatchChangeEvent;
-					}
-
-					this._proposedSelectedIndex = value;
-					this.invalidateProperties();
-				}
-			}
-			else
-			{
-				if( dispatchChangeEvent )
-				{
-					this.dispatchChangeAfterSelection = dispatchChangeEvent;
-				}
-
-				this._proposedSelectedIndex = value;
-				this.invalidateProperties();
-			}
-		}
-
-
 		private function findTypicalItem():void
 		{
 			if ( this.dataProvider )
@@ -242,11 +204,49 @@ package com.ivt.flex.controls
 			}
 		}
 
+
         /**
          * Override the setSelectedIndex() mx_internal method to not select an item that
          * is forbidden to be selected...
          */
-        override mx_internal function setSelectedIndices(value:Vector.<int>, dispatchChangeEvent:Boolean = false, changeCaret:Boolean = true ):void
+        override mx_internal function setSelectedIndex( value:int, dispatchChangeEvent:Boolean = false ):void
+        {
+            if( value == this.selectedIndex )
+            {
+                return;
+            }
+
+            if( value >= 0 && this.dataProvider != null && value < this.dataProvider.length )
+            {
+                if( this.isSelectable( this.dataProvider.getItemAt( value ) ) != false )
+                {
+
+                    if( dispatchChangeEvent )
+                    {
+                        this.dispatchChangeAfterSelection = dispatchChangeEvent;
+                    }
+
+                    this._proposedSelectedIndex = value;
+                    this.invalidateProperties();
+                }
+            }
+            else
+            {
+                if( dispatchChangeEvent )
+                {
+                    this.dispatchChangeAfterSelection = dispatchChangeEvent;
+                }
+
+                this._proposedSelectedIndex = value;
+                this.invalidateProperties();
+            }
+        }
+
+        /**
+         * Override the setSelectedIndex() mx_internal method to not select an item that
+         * is forbidden to be selected...
+         */
+        override mx_internal function setSelectedIndices(value:Vector.<int>, dispatchChangeEvent:Boolean = false):void
         {
             var newValue:Vector.<int> = new Vector.<int>;
             // take out indices that are on items that are not able to be selected...

@@ -33,8 +33,10 @@ package com.ivt.flex.controls
 		public static const DELAYED_CHANGED:String = "delayedChange";
 
 		private var _isFocused:Boolean;
+		private var _prompt:String = '';
 		private var _prefix:String = '';
 		private var _text:String = '';
+		protected var _prompting:Boolean = false;
 		private var _timer:Timer = new Timer( 0, 1 );
 
 		public function TextInput()
@@ -61,7 +63,9 @@ package com.ivt.flex.controls
 			super.partAdded( partName, instance );
 			if( instance == this.textDisplay )
 			{
+				this.textDisplay.addEventListener( FocusEvent.FOCUS_IN, this.onFocusInHandler );
 				this.textDisplay.addEventListener( FocusEvent.FOCUS_OUT, this.onFocusOutHandler );
+				this.setPrompting( this._prompting );
 			}
 		}
 
@@ -70,15 +74,39 @@ package com.ivt.flex.controls
 			super.partRemoved( partName, instance );
 			if( instance == this.textDisplay )
 			{
+				this.textDisplay.removeEventListener( FocusEvent.FOCUS_IN, this.onFocusInHandler );
 				this.textDisplay.removeEventListener( FocusEvent.FOCUS_OUT, this.onFocusOutHandler );
 			}
+		}
+
+		private function onFocusInHandler( event:FocusEvent ):void
+		{
+			this._isFocused = true;
+			if( this._prompting )
+			{
+				super.text = '';
+				this.setPrompting( false );
+			}
+			else
+			{
+				super.text = this._text;
+			}
+			this.invalidateSkinState();
 		}
 
 		private function onFocusOutHandler( event:FocusEvent ):void
 		{
 			this._isFocused = false;
-			this._text = super.text;
-			super.text = this._prefix + this._text;
+			if( super.text.length == 0 )
+			{
+				super.text = this._prompt;
+				this.setPrompting( true );
+			}
+			else
+			{
+				this._text = super.text;
+				super.text = this._prefix + this._text;
+			}
 			this.invalidateSkinState();
 
 			if( this._timer.running )
@@ -105,6 +133,21 @@ package com.ivt.flex.controls
 		}
 
 		/**
+		 * The text which is displayed in the text input when it is empty and does not have focus.
+		 */
+		public function get prompt():String { return this._prompt }
+		public function set prompt( value:String ):void
+		{
+			var oldPrompt:String = this._prompt;
+			this._prompt = value;
+			if( super.text.length == 0 || super.text == oldPrompt )
+			{
+				super.text = this._prompt;
+				this.setPrompting( true );
+			}
+		}
+
+		/**
 		 * The text which is displayed before the text when it does not have focus.
 		 */
 		public function get prefix():String { return this._prefix }
@@ -116,6 +159,11 @@ package com.ivt.flex.controls
 		[Bindable]
 		override public function get text():String
 		{
+			if( this._prompting )
+			{
+				return "";
+			}
+
 			return this._isFocused ? super.text : this._text;
 		}
 
@@ -131,9 +179,44 @@ package com.ivt.flex.controls
 		 */
 		override public function set text( value:String ):void
 		{
-			this._text = value;
+			if ( this._prompt != "" && (value == "" || value == null) )
+			{
+				// Make sure to setPrompting() before calling super.text, because of the order of some generated binding
+				// code, it will end up calling this.text at some point, which will return nothing because we are prompting...
+				// Seems to stuff up validators...
+				this.setPrompting( true );
+				this._text = value;
+				super.text = this._prompt;
+			}
+			else
+			{
+				// Make sure to setPrompting() before calling super.text, because of the order of some generated binding
+				// code, it will end up calling this.text at some point, which will return nothing because we are prompting...
+				// Seems to stuff up validators...
+				this.setPrompting( false );
+				this._text = value;
+				super.text = this._prefix + (this._text != null ? this._text : "");
+			}
 		}
 
+		private function setPrompting( isPrompting:Boolean ):void
+		{
+			// TODO: Should not hard-code the prompting style here...
+			this._prompting = isPrompting;
+			if ( this.textDisplay != null )
+			{
+				if( isPrompting )
+				{
+					this.textDisplay.setStyle( 'fontStyle', 'italic' );
+					this.textDisplay.alpha = 0.5;
+				}
+				else
+				{
+					this.textDisplay.setStyle( 'fontStyle', 'normal' );
+					this.textDisplay.alpha = 1.0;
+				}
+			}
+		}
 
 		/**
 		 * Amount of milliseconds between the last key press and a filter change event being
