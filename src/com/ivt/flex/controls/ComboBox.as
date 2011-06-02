@@ -37,6 +37,7 @@ package com.ivt.flex.controls
 		private var _matchingList:ArrayCollection = new ArrayCollection();
 		private var _shrink:Boolean = true;
 		private var _shrinkLimit:int = 1000;
+		private var _needTextFix:Boolean = false;
 		public  var sizeToFit:Boolean = false;
 		public  var autoFill:Boolean = true;
 
@@ -267,6 +268,18 @@ package com.ivt.flex.controls
 			}
 		}
 
+		override protected function commitProperties():void
+		{
+			var text:String = this.textInput.text;
+			super.commitProperties();
+			if( this._needTextFix )
+			{
+				this.textInput.text = text;
+				this.textInput.selectRange( this.textInput.text.length, this.textInput.text.length );
+				this._needTextFix = false;
+			}
+		}
+
 		private function matchAnyPart( text:String ):void
 		{
 			var upperText:String = text.toUpperCase();
@@ -357,6 +370,7 @@ package com.ivt.flex.controls
 				{
 					if( this._shrink )
 					{
+						this._needTextFix = true;
 						(this.dataProvider as SharedList).refresh();
 					}
 
