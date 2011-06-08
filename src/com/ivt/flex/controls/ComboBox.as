@@ -270,9 +270,15 @@ package com.ivt.flex.controls
 
 		override protected function commitProperties():void
 		{
-			var text:String = this.textInput.text;
+			var text:String = null;
+			if( this.textInput )
+			{
+				text = this.textInput.text;
+			}
+
 			super.commitProperties();
-			if( this._needTextFix )
+
+			if( this._needTextFix && this.textInput )
 			{
 				this.textInput.text = text;
 				this.textInput.selectRange( this.textInput.text.length, this.textInput.text.length );
