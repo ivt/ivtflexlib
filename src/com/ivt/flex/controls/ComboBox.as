@@ -1,4 +1,3 @@
-
 package com.ivt.flex.controls
 {
 	import com.ivt.flex.utils.SharedList;
@@ -13,6 +12,8 @@ package com.ivt.flex.controls
 	import mx.collections.ArrayCollection;
 	import mx.collections.IList;
 	import mx.core.mx_internal;
+	import mx.events.CollectionEvent;
+	import mx.events.CollectionEventKind;
 	import mx.states.State;
 
 	import spark.components.ComboBox;
@@ -58,6 +59,30 @@ package com.ivt.flex.controls
 			else
 			{
 				super.dataProvider = null;
+			}
+		}
+
+		override protected function dataProvider_collectionChangeHandler( event:Event ):void
+		{
+			var index:int = this.selectedIndex;
+			var caret:Number = this.caretIndex;
+			var item:* = this.selectedItem;
+
+			super.dataProvider_collectionChangeHandler( event );
+
+			if( event is CollectionEvent )
+			{
+				var ce:CollectionEvent = CollectionEvent( event );
+
+				if( ce.kind == CollectionEventKind.REFRESH )
+				{
+					var itemIndex:int = this.dataProvider.getItemIndex( item );
+					this.setSelectedIndex( itemIndex );
+					if( itemIndex == index )
+					{
+						this.setCurrentCaretIndex( caret );
+					}
+				}
 			}
 		}
 
