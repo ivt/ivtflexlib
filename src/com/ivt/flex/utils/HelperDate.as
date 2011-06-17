@@ -139,6 +139,10 @@ package com.ivt.flex.utils
 		 */
 		public static function diff( date1:Date, date2:Date = null ):int
 		{
+			if( date1 == null )
+			{
+				date1 = new Date();
+			}
 			if ( date2 == null )
 			{
 				date2 = new Date();
