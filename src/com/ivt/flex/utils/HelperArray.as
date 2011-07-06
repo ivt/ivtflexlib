@@ -309,5 +309,104 @@ import mx.utils.ArrayUtil;
 				return null;
 			}
 		}
+
+		public static function getItemIndexByPropertyKey( value:int, property:String, array:Object ):int
+		{
+			if( array != null && array.hasOwnProperty( "length" ) && array.length > 0 )
+			{
+				var min:int = 0;
+				var max:int = array.length - 1;
+				var mid:int = (min + max) / 2;
+				var item:Object = null;
+				var key:int = 0;
+
+				do
+				{
+					mid = (min + max) / 2;
+					item = array[ mid ];
+					if( item != null && item.hasOwnProperty( property ) )
+					{
+						key = item[ property ] as int;
+						if( value == key )
+						{
+							return mid;
+						}
+						else if( value < key )
+						{
+							max = mid - 1;
+						}
+						else
+						{
+							min = mid + 1;
+						}
+					}
+				} while( min <= max );
+			}
+
+			return -1;
+		}
+
+		public static function getItemByPropertyKey( value:int, property:String, array:Object ):*
+		{
+			if( array != null && array.hasOwnProperty( "length" ) && array.length > 0 )
+			{
+				var min:int = 0;
+				var max:int = array.length - 1;
+				var mid:int = (min + max) / 2;
+				var item:Object = null;
+				var key:int = 0;
+
+				do
+				{
+					mid = (min + max) / 2;
+					item = array[ mid ];
+					if( item != null && item.hasOwnProperty( property ) )
+					{
+						key = item[ property ] as int;
+						if( value == key )
+						{
+							return item;
+						}
+						else if( value < key )
+						{
+							max = mid - 1;
+						}
+						else
+						{
+							min = mid + 1;
+						}
+					}
+				} while( min <= max );
+			}
+
+			return null;
+		}
+
+		// This does a linear search, maybe a binary search is possible?
+		// We search from the end on the assumption that most of the time the item will have a newer key
+		public static function addItemByPropertyKey( item:*, property:String, array:Array ):void
+		{
+			if( array != null && array.hasOwnProperty( "length" ) && item.hasOwnProperty( property ) )
+			{
+				var object:Object;
+				var key:int = item[ property ] as int;
+
+				for( var ii:int = array.length - 1; ii > 0; ii-- )
+				{
+					object = array[ ii ];
+					if( object != null && object.hasOwnProperty( property ) )
+					{
+						if( key > (object[ property ] as int) )
+						{
+							array.splice( ii, 0, item );
+							return;
+						}
+					}
+				}
+			}
+
+			// Didn't find a spot for it, add it to the start
+			array.unshift( item );
+		}
 	}
 }
