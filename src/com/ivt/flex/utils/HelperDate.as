@@ -555,5 +555,22 @@ package com.ivt.flex.utils
 			date.fullYear = utc.fullYearUTC;
 			return date;
 		}
+
+		public static function sortCompare( date1:Date, date2:Date ):int
+		{
+			var date1S:Number = date1.getTime();
+			var date2S:Number = date2.getTime();
+			
+			if( date1S > date2S )
+			{
+				return -1;
+			}
+			else if( date2S > date1S )
+			{
+				return 1;
+			}
+
+			return 0;
+		}
 	}
 }
