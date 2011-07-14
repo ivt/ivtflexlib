@@ -558,9 +558,18 @@ package com.ivt.flex.utils
 
 		public static function sortCompare( date1:Date, date2:Date ):int
 		{
+			if( date1 == null )
+			{
+				return ( date2 == null ) ? 0 : 1;
+			}
+			else if( date2 == null )
+			{
+				return -1;
+			}
+
 			var date1S:Number = date1.getTime();
 			var date2S:Number = date2.getTime();
-			
+
 			if( date1S > date2S )
 			{
 				return -1;
