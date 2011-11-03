@@ -86,10 +86,12 @@ package com.ivt.flex.utils
 				if( convertUTC )
 				{
 					newDate.setUTCFullYear( dateParts[0], Number( dateParts[1] ) - 1, Number( dateParts[2] ) );
+					newDate.setUTCHours( 0, 0, 0, 0 );
 				}
 				else
 				{
 					newDate.setFullYear( dateParts[0], Number( dateParts[1] ) - 1, Number( dateParts[2] ) );
+					newDate.setHours( 0, 0, 0, 0 );
 				}
 				
 				return newDate;
