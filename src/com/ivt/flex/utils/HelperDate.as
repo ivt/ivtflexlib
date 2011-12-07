@@ -574,11 +574,11 @@ package com.ivt.flex.utils
 
 			if( date1S > date2S )
 			{
-				return -1;
+				return 1;
 			}
 			else if( date2S > date1S )
 			{
-				return 1;
+				return -1;
 			}
 
 			return 0;
