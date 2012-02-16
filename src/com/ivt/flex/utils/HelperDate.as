@@ -194,6 +194,32 @@ package com.ivt.flex.utils
 		}
 
 		/**
+		 * Returns the date with the time components at either the start or end of the day.
+		 * @param date
+		 * @param timeEnd
+		 * @return
+		 */
+		public static function dateOnly( date:Date, timeEnd:Boolean = false ):Date
+		{
+			if( timeEnd )
+			{
+				date.hours = 23;
+				date.minutes = 59;
+				date.seconds = 59;
+				date.milliseconds = 0;
+			}
+			else
+			{
+				date.hours = 0;
+				date.minutes = 0;
+				date.seconds = 0;
+				date.milliseconds = 0;
+			}
+
+			return date;
+		}
+
+		/**
 		 * Turn a number of seconds into a string such as '3 days 13 hours 30 mins
 		 * @param seconds
 		 * @param units An array containing any combination of 'minutes', 'hours', 'days', 'seconds'

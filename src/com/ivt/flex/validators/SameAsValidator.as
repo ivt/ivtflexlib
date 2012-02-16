@@ -44,8 +44,6 @@ package com.ivt.flex.validators
 			{
 				return SameAsValidator.validateSameAs( this, value,  null );
 			}
-
-
 		}
 	}
 }
