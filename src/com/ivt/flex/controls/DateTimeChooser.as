@@ -463,7 +463,10 @@ package com.ivt.flex.controls
 					}
 				}
 
-				this.selectedDate = this.dateArrayToDate( this.parseDateTimeString( this.inputText.text ) ); // Force the current date to be verified and updated.
+				if( this.inputText )
+				{
+					this.selectedDate = this.dateArrayToDate( this.parseDateTimeString( this.inputText.text ) ); // Force the current date to be verified and updated.
+				}
 			}
 		}
 
